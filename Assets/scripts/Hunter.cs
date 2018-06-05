@@ -28,7 +28,7 @@ public class Hunter : MonoBehaviour
     {
         waitActive = true;
         this.GetComponent<SpriteRenderer>().sprite = death;
-        yield return new WaitForSecondsRealtime(0.1f);
+        yield return new WaitForSecondsRealtime(0.2f);
         hit = true;
         canSwitch = true;
         waitActive = false;
