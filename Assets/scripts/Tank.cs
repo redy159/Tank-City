@@ -5,19 +5,23 @@ public class Tank : MonoBehaviour {
     public float speed = 15.0f;
     public Transform firePosition;
     public GameObject bullet;
+    public int Type; // Loai
+    public int Health = 1; // Mau
+    public Vector3 position; // Vi Tri Xe Tang
 
-    private Rigidbody2D rb;
-    private float dx = 0.0f, dy = 0.0f;
-    private GameObject projectile;
+    public Node CurrentNode; // Node Dang O
+    public Rigidbody2D rb;
+    public float dx = 0.0f, dy = 0.0f;
+    public GameObject projectile;
 
-    void Start ()
+    public void Start ()
     {
         rb = gameObject.GetComponent<Rigidbody2D>(); 
     }
 
-	void Update ()
+	public void Update ()
     {
-        dx = Input.GetAxisRaw("Horizontal");
+        /*dx = Input.GetAxisRaw("Horizontal");
         dy = dx == 0.0f ? Input.GetAxisRaw("Vertical") : 0.0f;
         
 
@@ -47,10 +51,41 @@ public class Tank : MonoBehaviour {
         rb.velocity = new Vector2(dx, dy) * speed;
 
         if (Input.GetButtonDown("Fire1"))
-            Shoot();
+            Shoot();*/
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    public void FacingDirection(){// Quay Mat Ve Huong Nao
+        if (dx != 0)
+        {
+            if (dx == 1)
+            {
+                gameObject.transform.rotation = Quaternion.Euler(0, 0, -90);
+            }
+            else
+            {
+                gameObject.transform.rotation = Quaternion.Euler(0, 0, 90);
+            }
+        }
+        else if (dy != 0)
+        {
+            if (dy == 1)
+            {
+                gameObject.transform.rotation = Quaternion.Euler(0, 0, 0);
+            }
+            else
+            {
+                gameObject.transform.rotation = Quaternion.Euler(0, 0, 180);
+            }
+       }
+    }
+
+    void Move(float x,float y){// Di Chuyen Sang X Hoac Y do ( Dang Sai Chua Fix)
+        dx = (x >= 1.0f)?1:0;
+        dy = x == 0.0f ? ( y >= 1.0f ? 1 : 0 ) : 0.0f;
+		rb.velocity = new Vector2(dx, dy) * speed;
+	}
+
+    public void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.tag == "bullet")
         {
@@ -59,7 +94,7 @@ public class Tank : MonoBehaviour {
         }
     }
 
-    void Shoot()
+    public void Shoot()
     {
         Vector2 bulletPos = transform.position;
         GameObject a= Instantiate(bullet);
