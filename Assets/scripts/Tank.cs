@@ -21,7 +21,7 @@ public class Tank : MonoBehaviour {
 
 	public void Update ()
     {
-        /*dx = Input.GetAxisRaw("Horizontal");
+       /* dx = Input.GetAxisRaw("Horizontal");
         dy = dx == 0.0f ? Input.GetAxisRaw("Vertical") : 0.0f;
         
 
