@@ -9,7 +9,7 @@ public class Bulldozer : MonoBehaviour
     public Node StartNode;
     public GameObject player;
     private GameObject Target;
-    private control playercontrol; //excute control
+    private GameObject playercontrol; //excute control
     private Node currentNode, nexnode;
     private float[] g, f;
     private Node[] pre;
@@ -113,7 +113,7 @@ public class Bulldozer : MonoBehaviour
             f[i] = g[i];
         }
 
-        Target = playercontrol.getCurentNode();
+        //Target = playercontrol.getCurentNode();
         List<Node> open = new List<Node>();
         List<Node> close = new List<Node>();
         open.Add(currentNode);
@@ -216,7 +216,7 @@ public class Bulldozer : MonoBehaviour
         }
         catch (System.Exception e)
         {
-            currentNode = Randomnode(currentNode); //excute ramdomnode
+            //currentNode = Randomnode(currentNode); //excute ramdomnode
         }
         return currentNode;
     }
