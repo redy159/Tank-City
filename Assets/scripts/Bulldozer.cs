@@ -7,10 +7,10 @@ using System;
 public class Bulldozer : MonoBehaviour
 {
     public Node StartNode;
-    public GameObject player;
-    private GameObject Target;
-    private GameObject playercontrol; //excute control
-    private Node currentNode, nexnode;
+    private GameObject player;
+    public GameObject target;
+    //private GameObject playerControl; //excute control
+    private Node currentNode, nextNode;
     private float[] g, f;
     private Node[] pre;
     public const int row = 18;
@@ -25,39 +25,22 @@ public class Bulldozer : MonoBehaviour
     void Start()
     {
         rb = gameObject.GetComponent<Rigidbody2D>();
+        currentNode = StartNode;
     }
 
     void Update()
     {
-        dx = Input.GetAxisRaw("Horizontal");
-        dy = dx == 0.0f ? Input.GetAxisRaw("Vertical") : 0.0f;
-
-
-        if (dx != 0)
+        try
         {
-            if (dx == 1)
-            {
-                gameObject.transform.rotation = Quaternion.Euler(0, 0, -90);
-            }
-            else
-            {
-                gameObject.transform.rotation = Quaternion.Euler(0, 0, 90);
-            }
+            float step = speed * Time.deltaTime;
+            transform.position = Vector3.MoveTowards(transform.position, nextNode.getGameobj().transform.position, step);
+            // Debug.Log(gameObject.name + " go from " + CurrentNode.name + " to " + nexnode.getGameobj().name);
+
         }
-        else if (dy != 0)
+        catch (Exception e)
         {
-            if (dy == 1)
-            {
-                gameObject.transform.rotation = Quaternion.Euler(0, 0, 0);
-            }
-            else
-            {
-                gameObject.transform.rotation = Quaternion.Euler(0, 0, 180);
-            }
+            nextNode = findNextNode();
         }
-
-        rb.velocity = new Vector2(dx, dy) * speed;
-
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -69,6 +52,15 @@ public class Bulldozer : MonoBehaviour
         if (collision.gameObject.tag == "base")
         {
             Destroy(gameObject);
+        }
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.tag == "Node")
+        {
+            currentNode = collision.gameObject.GetComponent<Node>();
+            nextNode = findNextNode();
         }
     }
 
@@ -93,10 +85,7 @@ public class Bulldozer : MonoBehaviour
         return Mathf.Sqrt((xa - xb) * (xa - xb) + (ya - yb) * (ya - yb));
     }
 
-    //find min value fscore in set
     // find all acceptable next point with standind point
-   
-
     private Node findNextNode() //create node findNextNode
     {
         g = new float[180];
@@ -113,7 +102,9 @@ public class Bulldozer : MonoBehaviour
             f[i] = g[i];
         }
 
-        //Target = playercontrol.getCurentNode();
+        // xác định vị trí ng chơi
+        //target = playerControl.getCurentNode();
+
         List<Node> open = new List<Node>();
         List<Node> close = new List<Node>();
         open.Add(currentNode);
@@ -125,17 +116,18 @@ public class Bulldozer : MonoBehaviour
             //find the first current Node as minnimun in open
             foreach (Node node in open)
             {
-                if (g[int.Parse(node.getGameobj().name)] + calculateHValue(node.getGameobj(), Target) < min)
+                if (g[int.Parse(node.getGameobj().name)] + calculateHValue(node.getGameobj(), target) < min)
                 {
                     currentPoint = node;
-                    min = g[int.Parse(node.getGameobj().name)] + calculateHValue(currentPoint.getGameobj(), Target);
+                    min = g[int.Parse(node.getGameobj().name)] + calculateHValue(currentPoint.getGameobj(), target);
                 }
             }
 
             //when AI come to destination
-            if (Target.name == currentPoint.getGameobj().name)
+            //if (target.transform.position.x == currentPoint.getGameobj().transform.position.x || target.transform.position.y == currentPoint.getGameobj().transform.position.y)//chay toi eage
+            if (target.name == currentPoint.name)
             {
-                break;
+                break;  //shoot for AI
             }
 
             open.Remove(currentPoint);
@@ -179,7 +171,7 @@ public class Bulldozer : MonoBehaviour
                     if (open.IndexOf(q) == -1)
                     {
                         g[int.Parse(q.getGameobj().name)] = g[int.Parse(currentPoint.getGameobj().name)] + calculateHValue(currentPoint.getGameobj(), q.getGameobj());
-                        f[int.Parse(q.getGameobj().name)] = g[int.Parse(q.getGameobj().name)] + calculateHValue(Target, q.getGameobj());
+                        f[int.Parse(q.getGameobj().name)] = g[int.Parse(q.getGameobj().name)] + calculateHValue(target, q.getGameobj());
                         pre[int.Parse(q.getGameobj().name)] = currentPoint;
                         open.Add(q);
                     }
@@ -189,7 +181,7 @@ public class Bulldozer : MonoBehaviour
                         if (g[int.Parse(q.getGameobj().name)] > g[int.Parse(currentPoint.getGameobj().name)] + calculateHValue(currentPoint.getGameobj(), q.getGameobj()))
                         {
                             g[int.Parse(q.getGameobj().name)] = g[int.Parse(currentPoint.getGameobj().name)] + calculateHValue(currentPoint.getGameobj(), q.getGameobj());
-                            f[int.Parse(q.getGameobj().name)] = g[int.Parse(q.getGameobj().name)] + calculateHValue(Target, q.getGameobj());
+                            f[int.Parse(q.getGameobj().name)] = g[int.Parse(q.getGameobj().name)] + calculateHValue(target, q.getGameobj());
                             pre[int.Parse(q.getGameobj().name)] = currentPoint;
                         }
                     }
@@ -198,11 +190,10 @@ public class Bulldozer : MonoBehaviour
 
         }
 
-        //print result tracePath
         try
         {
             Node v = new Node();
-            int u = int.Parse(Target.name);
+            int u = int.Parse(target.name);
             while (true)
             {
                 v = pre[u];
@@ -219,5 +210,5 @@ public class Bulldozer : MonoBehaviour
             //currentNode = Randomnode(currentNode); //excute ramdomnode
         }
         return currentNode;
-    }
+    }   
 }
