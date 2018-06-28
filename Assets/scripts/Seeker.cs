@@ -4,11 +4,12 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 
-public class Bulldozer : MonoBehaviour
+
+public class Seeker : MonoBehaviour
 {
     public Node startNode;
-    private GameObject player;
-    public GameObject target;
+    //private GameObject player;
+    private GameObject target;
     //private GameObject playerControl; //excute control
     private Node currentNode, nextNode;
     private float[] g, f;
@@ -30,6 +31,8 @@ public class Bulldozer : MonoBehaviour
 
     void Update()
     {
+        target = Player.curNode;
+        Debug.Log(target);
         try
         {
             float step = speed * Time.deltaTime;
@@ -62,11 +65,19 @@ public class Bulldozer : MonoBehaviour
         {
             currentNode = collision.gameObject.GetComponent<Node>();
             nextNode = findNextNode();
-            
+
         }
     }
 
+    private void OnTriggerStay2D(Collider2D collision)
+    {
+        if ((collision.tag == "Node") && (collision.gameObject != target))
+        {
+            currentNode = collision.gameObject.GetComponent<Node>();
+            nextNode = findNextNode();
 
+        }
+    }
     // return heuristic value
     private float calculateHValue(GameObject a, GameObject b)
     {
@@ -76,7 +87,7 @@ public class Bulldozer : MonoBehaviour
         float yb = b.transform.position.y;
 
         // Return using the distance formula
-        return Mathf.Sqrt((xa - xb) * (xa - xb) + (ya - yb) * (ya - yb)); 
+        return Mathf.Sqrt((xa - xb) * (xa - xb) + (ya - yb) * (ya - yb));
     }
 
     // find all acceptable next point with standind point
@@ -84,11 +95,11 @@ public class Bulldozer : MonoBehaviour
     {
         g = new float[180];
         f = new float[180];
-        
+
         pre = new Node[180];
         g[int.Parse(currentNode.getGameobj().name)] = 0;
         f[int.Parse(currentNode.getGameobj().name)] = calculateHValue(currentNode.getGameobj(), target);
-    
+
         // xác định vị trí ng chơi
         //target = playerControl.getCurentNode();
 
@@ -196,5 +207,5 @@ public class Bulldozer : MonoBehaviour
             //currentNode = Randomnode(currentNode); //excute ramdomnode
         }
         return currentNode;
-    }   
+    }
 }

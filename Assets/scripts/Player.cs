@@ -4,13 +4,14 @@ using UnityEngine;
 
 public class Player : Tank {
 
-	// Use this for initialization
-	//void Start () {
-	//	rb = gameObject.GetComponent<Rigidbody2D>()	
-	//}
-	
-	// Update is called once per frame
+    // Use this for initialization
+    //void Start () {
+    //	rb = gameObject.GetComponent<Rigidbody2D>()	
+    //}
 
+    // Update is called once per frame
+
+    static public GameObject curNode;
 	
 	void Update () {
 		dx = Input.GetAxisRaw("Horizontal");
@@ -24,4 +25,12 @@ public class Player : Tank {
         if (Input.GetButtonDown("Fire1"))
             Shoot();
 	}
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.tag == "Node")
+            curNode = collision.gameObject;
+    }
+
+
 }

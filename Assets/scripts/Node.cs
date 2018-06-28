@@ -10,7 +10,7 @@ public class Node : MonoBehaviour
     public Node LeftNode;
     public Node RightNode;
     public Vector3 position;
-
+    public int obstacle =0;
     public int weight; // Trong So
     public int[] g = new int [2]; // Ham G voi g[0] la Player va G[1] la Base
     public int f; // ham F
@@ -32,4 +32,6 @@ public class Node : MonoBehaviour
     {
         return gameObject;
     }
+
 }
+

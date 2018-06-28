@@ -5,6 +5,14 @@ using System.Collections.Generic;
 
 public class Hunter : MonoBehaviour
 {
+    public Node startNode;
+    private GameObject player;
+    public GameObject target;
+    //private GameObject playerControl; //excute control
+    private Node currentNode, nextNode;
+    private float[] g, f;
+    private Node[] pre;
+
     public float speed = 15.0f;
     public Transform firePosition;
     public GameObject bullet;

@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 public class Eagle : MonoBehaviour
 {
     public Sprite damaged;
-    private int hp = 2;
+    public int hp = 2;
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.tag == "bullet")
