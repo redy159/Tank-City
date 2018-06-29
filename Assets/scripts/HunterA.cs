@@ -4,19 +4,20 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 
-public class Bulldozer : MonoBehaviour
+public class HunterA : MonoBehaviour
 {
     public Node startNode;
-    private GameObject player;
-    public GameObject target;
+
+    public GameObject mainTower;// main tower
+    public GameObject player;// player
     //private GameObject playerControl; //excute control
     private Node currentNode, nextNode;
-    private float[] g, f;
+    private float[] g, f_for_mainTower, f_for_player;
     private Node[] pre;
     public const int row = 18;
     public const int col = 10;
     public float speed = 15.0f;
-
+    private Node currentPoint;
 
     private Rigidbody2D rb;
     private float dx = 0.0f, dy = 0.0f;
@@ -30,6 +31,7 @@ public class Bulldozer : MonoBehaviour
 
     void Update()
     {
+        player = Player.curNode;
         try
         {
             float step = speed * Time.deltaTime;
@@ -56,20 +58,27 @@ public class Bulldozer : MonoBehaviour
         }
     }
 
+    //private void OnTriggerEnter2D(Collider2D collision)
+    //{
+    //    Debug.Log(collision.bounds.center);
+    //    Debug.Log(this.GetComponent<Collider2D>().bounds.center);
+    //}
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.tag == "Node") 
+        if (collision.tag == "Node")
             currentNode = collision.gameObject.GetComponent<Node>();
-     
+
     }
 
 
     private void OnTriggerStay2D(Collider2D collision)
     {
+
         if ((collision.tag == "Node") && (Math.Abs(collision.bounds.center.y - GetComponent<Collider2D>().bounds.center.y) <= 0.11) && (Math.Abs(collision.bounds.center.x - GetComponent<Collider2D>().bounds.center.x) <= 0.11))
         {
-                currentNode = collision.gameObject.GetComponent<Node>();
-                nextNode = findNextNode();
+            currentNode = collision.gameObject.GetComponent<Node>();
+            nextNode = findNextNode();
         }
     }
 
@@ -83,42 +92,63 @@ public class Bulldozer : MonoBehaviour
         float yb = b.transform.position.y;
 
         // Return using the distance formula
-        return Mathf.Sqrt((xa - xb) * (xa - xb) + (ya - yb) * (ya - yb)); 
+        return Mathf.Sqrt((xa - xb) * (xa - xb) + (ya - yb) * (ya - yb));
     }
+
+    //private Node findMinNode(float[] f_for_mainTower, float[] f_for_player, List<Node> open)
+    //{
+    //    Node result;
+       
+    //    return result;
+    //}
 
     // find all acceptable next point with standind point
     private Node findNextNode() //create node findNextNode
     {
         g = new float[180];
-        f = new float[180];
-        
+        f_for_mainTower = new float[180];
+        f_for_player = new float[180];
+
         pre = new Node[180];
         g[int.Parse(currentNode.getGameobj().name)] = 0;
-        f[int.Parse(currentNode.getGameobj().name)] = calculateHValue(currentNode.getGameobj(), target);
-    
+        f_for_mainTower[int.Parse(currentNode.getGameobj().name)] = calculateHValue(currentNode.getGameobj(), mainTower);
+        f_for_player[int.Parse(currentNode.getGameobj().name)] = calculateHValue(currentNode.getGameobj(), player);
+
         // xác định vị trí ng chơi
         //target = playerControl.getCurentNode();
-
+        
         List<Node> open = new List<Node>();
         List<Node> close = new List<Node>();
         open.Add(currentNode);
         while (open.Count != 0)
         {
-            Node currentPoint = new Node();
-            float min = 100000;
+            currentPoint = new Node();
+          
+            float min = 10000;
 
             //find the first current Node as minnimun in open
             foreach (Node node in open)
             {
-                if (g[int.Parse(node.getGameobj().name)] + calculateHValue(node.getGameobj(), target) < min)
+                if (g[int.Parse(node.getGameobj().name)] + calculateHValue(node.getGameobj(), mainTower) < min)
                 {
                     currentPoint = node;
-                    min = g[int.Parse(node.getGameobj().name)] + calculateHValue(currentPoint.getGameobj(), target);
+                    min = g[int.Parse(node.getGameobj().name)] + calculateHValue(currentPoint.getGameobj(), mainTower);
+                    Debug.Log(currentPoint);
+                }
+            }
+
+            foreach (Node node in open)
+            {
+                if (g[int.Parse(node.getGameobj().name)] + calculateHValue(node.getGameobj(), player) < min)
+                {
+                    currentPoint = node;
+                    min = g[int.Parse(node.getGameobj().name)] + calculateHValue(currentPoint.getGameobj(), player);
+                    Debug.Log(currentPoint);
                 }
             }
 
             //if (target.transform.position.x == currentPoint.getGameobj().transform.position.x || target.transform.position.y == currentPoint.getGameobj().transform.position.y)//chay toi eage
-            if (target.name == currentPoint.name)
+            if ((mainTower.name == currentPoint.name) || (player.name == currentPoint.name))
             {
                 break;  //shoot for AI
             }
@@ -152,7 +182,7 @@ public class Bulldozer : MonoBehaviour
                 //Node q isnot in close
                 if (close.IndexOf(q) != -1)
                 {
-                    if (g[int.Parse(q.getGameobj().name)] > g[int.Parse(currentPoint.getGameobj().name)] + calculateHValue(currentPoint.getGameobj(), q.getGameobj()))
+                    if (g[int.Parse(q.getGameobj().name)] > (g[int.Parse(currentPoint.getGameobj().name)] + calculateHValue(currentPoint.getGameobj(), q.getGameobj())))
                     {
                         close.Remove(q);
                         open.Add(q);
@@ -164,7 +194,8 @@ public class Bulldozer : MonoBehaviour
                     if (open.IndexOf(q) == -1)
                     {
                         g[int.Parse(q.getGameobj().name)] = g[int.Parse(currentPoint.getGameobj().name)] + q.obstacle;
-                        f[int.Parse(q.getGameobj().name)] = g[int.Parse(q.getGameobj().name)] + calculateHValue(target, q.getGameobj());
+                        f_for_mainTower[int.Parse(q.getGameobj().name)] = g[int.Parse(q.getGameobj().name)] + calculateHValue(mainTower, q.getGameobj());
+                        f_for_player[int.Parse(q.getGameobj().name)] = g[int.Parse(q.getGameobj().name)] + calculateHValue(player, q.getGameobj());
                         pre[int.Parse(q.getGameobj().name)] = currentPoint;
                         open.Add(q);
                     }
@@ -174,7 +205,8 @@ public class Bulldozer : MonoBehaviour
                         if (g[int.Parse(q.getGameobj().name)] > g[int.Parse(currentPoint.getGameobj().name)] + calculateHValue(currentPoint.getGameobj(), q.getGameobj()))
                         {
                             g[int.Parse(q.getGameobj().name)] = g[int.Parse(currentPoint.getGameobj().name)] + q.obstacle;
-                            f[int.Parse(q.getGameobj().name)] = g[int.Parse(q.getGameobj().name)] + calculateHValue(target, q.getGameobj());
+                            f_for_mainTower[int.Parse(q.getGameobj().name)] = g[int.Parse(q.getGameobj().name)] + calculateHValue(mainTower, q.getGameobj());
+                            f_for_player[int.Parse(q.getGameobj().name)] = g[int.Parse(q.getGameobj().name)] + calculateHValue(player, q.getGameobj());
                             pre[int.Parse(q.getGameobj().name)] = currentPoint;
                         }
                     }
@@ -183,25 +215,51 @@ public class Bulldozer : MonoBehaviour
 
         }
 
-        try
+        if (currentPoint.name == mainTower.name)
         {
-            Node nextMove = new Node();
-            int u = int.Parse(target.name);
-            while (true)
+            try
             {
-                nextMove = pre[u];
-                if (nextMove.getGameobj().name == currentNode.name)
+                Node nextMove = new Node();
+                int u = int.Parse(mainTower.name);
+                while (true)
                 {
-                    break;
+                    nextMove = pre[u];
+                    if (nextMove.getGameobj().name == currentNode.name)
+                    {
+                        break;
+                    }
+                    u = int.Parse(nextMove.getGameobj().name);
                 }
-                u = int.Parse(nextMove.getGameobj().name);
+                return GameObject.Find(u + "").GetComponent<Node>();
             }
-            return GameObject.Find(u + "").GetComponent<Node>();
+            catch (System.Exception e)
+            {
+                //currentNode = Randomnode(currentNode); //excute ramdomnode
+            }
         }
-        catch (System.Exception e)
+
+        if (currentPoint.name == player.name)
         {
-            //currentNode = Randomnode(currentNode); //excute ramdomnode
+            try
+            {
+                Node nextMove = new Node();
+                int u = int.Parse(player.name);
+                while (true)
+                {
+                    nextMove = pre[u];
+                    if (nextMove.getGameobj().name == currentNode.name)
+                    {
+                        break;
+                    }
+                    u = int.Parse(nextMove.getGameobj().name);
+                }
+                return GameObject.Find(u + "").GetComponent<Node>();
+            }
+            catch (System.Exception e)
+            {
+                //currentNode = Randomnode(currentNode); //excute ramdomnode
+            }
         }
         return currentNode;
-    }   
+    }
 }

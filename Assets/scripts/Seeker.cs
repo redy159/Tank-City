@@ -4,11 +4,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 
-
 public class Seeker : MonoBehaviour
 {
     public Node startNode;
-    //private GameObject player;
+    private GameObject player;
     private GameObject target;
     //private GameObject playerControl; //excute control
     private Node currentNode, nextNode;
@@ -32,7 +31,6 @@ public class Seeker : MonoBehaviour
     void Update()
     {
         target = Player.curNode;
-        Debug.Log(target);
         try
         {
             float step = speed * Time.deltaTime;
@@ -59,25 +57,23 @@ public class Seeker : MonoBehaviour
         }
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collision.tag == "Node")
-        {
-            currentNode = collision.gameObject.GetComponent<Node>();
-            nextNode = findNextNode();
-
-        }
-    }
+    //private void OnTriggerEnter2D(Collider2D collision)
+    //{
+    //    Debug.Log(collision.bounds.center);
+    //    Debug.Log(this.GetComponent<Collider2D>().bounds.center);
+    //}
 
     private void OnTriggerStay2D(Collider2D collision)
     {
-        if ((collision.tag == "Node") && (collision.gameObject != target))
+      
+        if ((collision.tag == "Node")&&(Math.Abs(collision.bounds.center.y - GetComponent<Collider2D>().bounds.center.y)<=0.13)&& (Math.Abs(collision.bounds.center.x - GetComponent<Collider2D>().bounds.center.x) <= 0.13))
         {
-            currentNode = collision.gameObject.GetComponent<Node>();
-            nextNode = findNextNode();
-
+                currentNode = collision.gameObject.GetComponent<Node>();
+                nextNode = findNextNode();
         }
     }
+
+
     // return heuristic value
     private float calculateHValue(GameObject a, GameObject b)
     {
