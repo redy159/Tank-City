@@ -30,12 +30,13 @@ public class Trigger_Fire : Tank {
 		float R = 10; // Range
         
 		if (hit.collider != null) {
-			if (hit.rigidbody.tag == "Player"){ 
-                Debug.Log("Pew");
+			if ((hit.rigidbody != null ) && (hit.rigidbody.tag == "Player")){ 
+                
 				float DX = Mathf.Abs(hit.rigidbody.position.x - transform.position.x);
 				float DY = Mathf.Abs(hit.rigidbody.position.y - transform.position.y);
 				if (((DX <= R) && (dx != 0)) || ((DY <= R) && (dy != 0)) ){ //Kiem tra Muc Tieu Da Trong Tam ban R khong
-					//this.Shoot(); //Ban Lien Tuc
+					Debug.Log("Pew");
+					Debug.Log(hit.collider.name);
 				}
             }
 	    }
