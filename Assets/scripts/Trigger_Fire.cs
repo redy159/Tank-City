@@ -35,7 +35,7 @@ public class Trigger_Fire : Tank {
 				float DX = Mathf.Abs(hit.rigidbody.position.x - transform.position.x);
 				float DY = Mathf.Abs(hit.rigidbody.position.y - transform.position.y);
 				if (((DX <= R) && (dx != 0)) || ((DY <= R) && (dy != 0)) ){ //Kiem tra Muc Tieu Da Trong Tam ban R khong
-					Debug.Log("Pew");
+					Debug.Log("Pew"); //Ban
 					Debug.Log(hit.collider.name);
 				}
             }
