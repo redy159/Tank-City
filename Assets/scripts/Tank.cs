@@ -46,8 +46,18 @@ public class Tank : MonoBehaviour {
     }
 
     void Move(float x,float y){// Di Chuyen Sang X Hoac Y do ( Dang Sai Chua Fix)
-        dx = (x >= 1.0f)?1:0;
-        dy = x == 0.0f ? ( y >= 1.0f ? 1 : 0 ) : 0.0f;
+        if (!(x == 0 && y == 0)) {
+                dx = (Mathf.Abs(x) >= Mathf.Abs(y)) ? 1 : 0;
+                dy = 1 - (dx * 1);//(x < y) ? 1 : 0;
+
+                if (x > 0) 
+                    dx *= 1;
+                else dx *= -1;
+                
+                if (y > 0) 
+                    dy *= 1;
+                else dy *= -1;
+            }
 		rb.velocity = new Vector2(dx, dy) * speed;
 	}
 

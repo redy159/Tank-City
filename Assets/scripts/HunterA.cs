@@ -36,6 +36,45 @@ public class HunterA : MonoBehaviour
         {
             float step = speed * Time.deltaTime;
             transform.position = Vector3.MoveTowards(transform.position, nextNode.getGameobj().transform.position, step);
+
+            float x = (nextNode.getGameobj().transform.position.x - currentNode.position.x);
+            float y = (nextNode.getGameobj().transform.position.y - currentNode.position.y);
+
+            if (!(x == 0 && y == 0)) {
+                dx = (Mathf.Abs(x) >= Mathf.Abs(y)) ? 1 : 0;
+                dy = 1 - (dx * 1);//(x < y) ? 1 : 0;
+
+                if (x > 0) 
+                    dx *= 1;
+                else dx *= -1;
+                
+                if (y > 0) 
+                    dy *= 1;
+                else dy *= -1;
+            }
+            //Quay Mat
+            if (dx != 0)
+                {
+                    if (dx == 1)
+                    {
+                        gameObject.transform.rotation = Quaternion.Euler(0, 0, -90);
+                    }
+                    else
+                    {
+                        gameObject.transform.rotation = Quaternion.Euler(0, 0, 90);
+                    }
+                }
+                else if (dy != 0)
+                {
+                    if (dy == 1)
+                    {
+                        gameObject.transform.rotation = Quaternion.Euler(0, 0, 0);
+                    }
+                    else
+                    {
+                        gameObject.transform.rotation = Quaternion.Euler(0, 0, 180);
+                    }
+            }
             // Debug.Log(gameObject.name + " go from " + CurrentNode.name + " to " + nexnode.getGameobj().name);
 
         }
