@@ -4,16 +4,25 @@ using UnityEngine;
 
 public class MenuTank : MonoBehaviour {
 
-    // Use this for initialization
-
-    static GameObject node;
+    public Vector2 position;
+    Vector2 nextNode;
+    protected Node currentNode;
+    public Rigidbody2D rb;
     
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+    public void Start()
+    {
+        rb = gameObject.GetComponent<Rigidbody2D>();
+    }
+
+    public void Update()
+    {
+        if(Input.GetKeyDown("down"))
+        {
+            rb.velocity = new Vector2(0, -1);
+        }
+        if(Input.GetKeyDown("up"))
+        {
+            rb.velocity = new Vector2(0, 1);
+        }
+    }
 }
