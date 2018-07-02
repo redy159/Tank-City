@@ -38,8 +38,6 @@ public class Bulldozer : MonoBehaviour
             float x = (nextNode.getGameobj().transform.position.x - currentNode.position.x);
             float y = (nextNode.getGameobj().transform.position.y - currentNode.position.y);
 
-            /*dx = (x >= 1.0f)?1:0;
-            dy = x == 0.0f ? ( y >= 1.0f ? 1 : 0 ) : 0.0f;*/
             if (!(x == 0 && y == 0)) {
                 dx = (Mathf.Abs(x) >= Mathf.Abs(y)) ? 1 : 0;
                 dy = 1 - (dx * 1);//(x < y) ? 1 : 0;
@@ -75,8 +73,7 @@ public class Bulldozer : MonoBehaviour
                         gameObject.transform.rotation = Quaternion.Euler(0, 0, 180);
                     }
             }
-             Debug.Log(gameObject.name + " go from " + currentNode.name + " to " + nextNode.getGameobj().name + " Dx: " + dx + " Dy " + dy);
-             Debug.Log(x + " " + y);
+             //Debug.Log(gameObject.name + " go from " + currentNode.name + " to " + nextNode.getGameobj().name + " Dx: " + dx + " Dy " + dy);
 
         }
         catch (Exception e)
@@ -119,13 +116,14 @@ public class Bulldozer : MonoBehaviour
     // return heuristic value
     private float calculateHValue(GameObject a, GameObject b)
     {
-        float xa = a.transform.position.x;
+        /*float xa = a.transform.position.x;
         float ya = a.transform.position.y;
         float xb = b.transform.position.x;
         float yb = b.transform.position.y;
 
         // Return using the distance formula
-        return Mathf.Sqrt((xa - xb) * (xa - xb) + (ya - yb) * (ya - yb)); 
+        //return Mathf.Sqrt((xa - xb) * (xa - xb) + (ya - yb) * (ya - yb)); */
+        return a.GetComponent<Node>().Dist_Base;
     }
 
     // find all acceptable next point with standind point
