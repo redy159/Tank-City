@@ -10,16 +10,20 @@ public class Node : MonoBehaviour
     public Node LeftNode;
     public Node RightNode;
     public Vector3 position;
-    public int obstacle =0;
-    public int weight; // Trong So
+    public int obstacle = 0;
+    /*public int weight; // Trong So
     public int[] g = new int [2]; // Ham G voi g[0] la Player va G[1] la Base
     public int f; // ham F
-    public int[] h = new int [4]; // Ham H Tuong DUong Voi Tuong Loai 
+    public int[] h = new int [4]; // Ham H Tuong DUong Voi Tuong Loai */
+    public int Dist_Base = -1; // 1 << 31 - 1 ;// Khoang Cach Den Eagle(Base), Duoc Khoi Tao Voi Gia Tri Vo Cuc
+
 
     // Use this for initialization
+    
     void Start()
     {
         position = gameObject.transform.position;
+        
     }
 
     // Update is called once per frame
@@ -32,6 +36,8 @@ public class Node : MonoBehaviour
     {
         return gameObject;
     }
-
+    public int getName(){
+        return int.Parse(this.name);
+    }
 }
 
