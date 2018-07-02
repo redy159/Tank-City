@@ -4,25 +4,45 @@ using UnityEngine;
 
 public class MenuTank : MonoBehaviour {
 
-    public Vector2 position;
-    Vector2 nextNode;
-    protected Node currentNode;
-    public Rigidbody2D rb;
-    
-    public void Start()
+    private GameObject[] choices;
+    private int index = 0;
+    private void Start()
     {
-        rb = gameObject.GetComponent<Rigidbody2D>();
+        choices = new GameObject[3];
+        for(int i = 0; i < 3; i++)
+        {
+            choices[i] = transform.GetChild(i).gameObject;
+        }
+        foreach (GameObject go in choices)
+            go.SetActive(false);
+        if (choices[0])
+            choices[0].SetActive(true);
     }
-
-    public void Update()
+    private void Update()
     {
-        if(Input.GetKeyDown("down"))
+        if (Input.GetKeyDown("up"))
         {
-            rb.velocity = new Vector2(0, -1);
+            choices[index].SetActive(false);
+            index--;
+            if (index < 0)
+                index = 2;
+            choices[index].SetActive(true);
         }
-        if(Input.GetKeyDown("up"))
+
+        if (Input.GetKeyDown("down"))
         {
-            rb.velocity = new Vector2(0, 1);
+            choices[index].SetActive(false);
+            index++;
+            if (index > 2)
+                index = 0;
+            choices[index].SetActive(true);
         }
+
+        if (index == 0 && Input.GetKeyDown("space"))
+            Application.LoadLevel("test");
+        if (index == 1 && Input.GetKeyDown("space"))
+            Application.LoadLevel("About");
+        if (index == 2 && Input.GetKeyDown("space"))
+            Application.LoadLevel("About");
     }
 }
