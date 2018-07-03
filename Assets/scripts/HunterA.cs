@@ -7,6 +7,8 @@ using System;
 public class HunterA : MonoBehaviour
 {
     public Node startNode;
+    public Transform firePosition;
+    public GameObject bullet;
 
     public GameObject mainTower;// main tower
     public GameObject player;// player
@@ -29,26 +31,77 @@ public class HunterA : MonoBehaviour
         currentNode = startNode;
     }
 
+    void RayShoot()
+    {
+        rb = gameObject.GetComponent<Rigidbody2D>();
+        //dx = 1;
+        //dy = 0;
+
+        float x = (firePosition.position.x - transform.position.x);
+        float y = (firePosition.position.y - transform.position.y);
+        if (!(x == 0 && y == 0))
+        {
+            dx = (Mathf.Abs(x) >= Mathf.Abs(y)) ? 1 : 0;
+            dy = 1 - (dx * 1);//(x < y) ? 1 : 0;
+
+            if (x > 0)
+                dx *= 1;
+            else dx *= -1;
+
+            if (y > 0)
+                dy *= 1;
+            else dy *= -1;
+        }
+
+        //Ray Cast Theo Huong Quay
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, new Vector2(dx, dy));
+        //RaycastHit2D hit = Physics2D.Raycast(firePosition.position, new Vector2(1,0) );
+        float R = 10;
+        Debug.Log(hit.centroid);
+
+        //Debug.Log(hit.rigidbody.name);
+        if (hit.collider != null)
+        {
+            Debug.Log(hit.collider.tag);
+            if (hit.collider.tag == "Player")
+            {
+                float DX = Mathf.Abs(hit.rigidbody.position.x - transform.position.x);
+                float DY = Mathf.Abs(hit.rigidbody.position.y - transform.position.y);
+                if (((DX <= R) && (dx != 0)) || ((DY <= R) && (dy != 0)))
+                //Kiem tra Muc Tieu Da Trong Tam ban R khong
+                {
+                    this.Shoot();
+                   
+                }
+
+            }
+        }
+    }
+
     void Update()
     {
         player = Player.curNode;
+
+        //shoot raycast
+        RayShoot();
+        
         try
         {
             float step = speed * Time.deltaTime;
             transform.position = Vector3.MoveTowards(transform.position, nextNode.getGameobj().transform.position, step);
 
-            float x = (nextNode.getGameobj().transform.position.x - currentNode.position.x);
-            float y = (nextNode.getGameobj().transform.position.y - currentNode.position.y);
+            float sx = (nextNode.getGameobj().transform.position.x - currentNode.position.x);
+            float sy = (nextNode.getGameobj().transform.position.y - currentNode.position.y);
 
-            if (!(x == 0 && y == 0)) {
-                dx = (Mathf.Abs(x) >= Mathf.Abs(y)) ? 1 : 0;
+            if (!(sx == 0 && sy == 0)) {
+                dx = (Mathf.Abs(sx) >= Mathf.Abs(sy)) ? 1 : 0;
                 dy = 1 - (dx * 1);//(x < y) ? 1 : 0;
 
-                if (x > 0) 
+                if (sx > 0) 
                     dx *= 1;
                 else dx *= -1;
                 
-                if (y > 0) 
+                if (sy > 0) 
                     dy *= 1;
                 else dy *= -1;
             }
@@ -83,6 +136,7 @@ public class HunterA : MonoBehaviour
             nextNode = findNextNode();
         }
 
+
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -97,11 +151,6 @@ public class HunterA : MonoBehaviour
         }
     }
 
-    //private void OnTriggerEnter2D(Collider2D collision)
-    //{
-    //    Debug.Log(collision.bounds.center);
-    //    Debug.Log(this.GetComponent<Collider2D>().bounds.center);
-    //}
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -172,7 +221,7 @@ public class HunterA : MonoBehaviour
                 {
                     currentPoint = node;
                     min = g[int.Parse(node.getGameobj().name)] + calculateHValue(currentPoint.getGameobj(), mainTower);
-                    Debug.Log(currentPoint);
+                 ;
                 }
             }
 
@@ -182,7 +231,7 @@ public class HunterA : MonoBehaviour
                 {
                     currentPoint = node;
                     min = g[int.Parse(node.getGameobj().name)] + calculateHValue(currentPoint.getGameobj(), player);
-                    Debug.Log(currentPoint);
+                    
                 }
             }
 
@@ -300,5 +349,15 @@ public class HunterA : MonoBehaviour
             }
         }
         return currentNode;
+    }
+
+    void Shoot()
+    {
+        Vector2 bulletPos = transform.position;
+        GameObject a = Instantiate(bullet);
+        a.SetActive(false);
+        a.transform.position = firePosition.position;
+        a.transform.rotation = transform.rotation;
+        a.SetActive(true);
     }
 }

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class steel : MonoBehaviour {
+public class Fire : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
@@ -13,10 +13,4 @@ public class steel : MonoBehaviour {
 	void Update () {
 		
 	}
-
-    void OnTriggerExit2D(Collider2D other)
-    {
-        if (other.tag == "Node")
-            other.gameObject.GetComponent<Node>().obstacle = 0;
-    }
 }

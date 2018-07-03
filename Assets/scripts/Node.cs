@@ -39,5 +39,15 @@ public class Node : MonoBehaviour
     public int getName(){
         return int.Parse(this.name);
     }
+
+
+
+    void OnTriggerStay2D(Collider2D other)
+    {
+        if (other.tag == "steel")
+            obstacle = 9999;
+        if (other.tag == "brick")
+            obstacle = 9;
+    }
 }
 
