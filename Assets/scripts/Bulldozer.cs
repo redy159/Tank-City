@@ -116,15 +116,7 @@ public class Bulldozer : MonoBehaviour
 
 
     // return heuristic value
-    private float calculateHValue(GameObject a, GameObject b)
-    {
-       /* float xa = a.transform.position.x;
-        float ya = a.transform.position.y;
-        float xb = b.transform.position.x;
-        float yb = b.transform.position.y;
-
-       // Return using the distance formula
-        return Mathf.Sqrt((xa - xb) * (xa - xb) + (ya - yb) * (ya - yb));*/
+    private float calculateHValue(GameObject a, GameObject b){
         return a.GetComponent<Node>().Dist_Base;
     }
 
@@ -153,10 +145,10 @@ public class Bulldozer : MonoBehaviour
             //find the first current Node as minnimun in open
             foreach (Node node in open)
             {
-                if (g[int.Parse(node.getGameobj().name)] + calculateHValue(node.getGameobj(), target) < min)
+                if (g[node.getName()] + calculateHValue(node.getGameobj(), target) < min)
                 {
                     currentPoint = node;
-                    min = g[int.Parse(node.getGameobj().name)] + calculateHValue(currentPoint.getGameobj(), target);
+                    min = g[node.getName()] + calculateHValue(currentPoint.getGameobj(), target);
                 }
             }
 
@@ -190,16 +182,10 @@ public class Bulldozer : MonoBehaviour
             }
             #endregion
 
-            foreach (Node q in nextPoint)
-            {
-                //Node q isnot in close and open
+            foreach (Node q in nextPoint) {
+                //Node q is not in close and open
                 if (close.IndexOf(q) == -1 && open.IndexOf(q) == -1)
                 {
-                    //if (g[q.getName()] > g[currentPoint.getName()] + calculateHValue(currentPoint.getGameobj(), q.getGameobj()))
-                    //{
-                    //    close.Remove(q);
-                    //    open.Add(q);
-                    //}
                     g[q.getName()] = g[currentPoint.getName()] + calculateHValue(currentPoint.getGameobj(), q.getGameobj()) + q.obstacle;
                     f[q.getName()] = g[q.getName()] + calculateHValue(target, q.getGameobj());
                     pre[q.getName()] = currentPoint;
@@ -213,9 +199,7 @@ public class Bulldozer : MonoBehaviour
                         g[q.getName()] = g[currentPoint.getName()] + calculateHValue(currentPoint.getGameobj(), q.getGameobj()) + q.obstacle;
                         f[q.getName()] = g[q.getName()] + calculateHValue(target, q.getGameobj());
                         pre[q.getName()] = currentPoint;
-                        //open.Add(q);
                     }
-
                 //Node q is in close
                 if (close.IndexOf(q) == -1)
                 {
