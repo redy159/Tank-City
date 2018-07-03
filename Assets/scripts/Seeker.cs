@@ -63,13 +63,14 @@ public class Seeker : MonoBehaviour
         if (hit.collider != null)
         {
             Debug.Log(hit.collider.tag);
-            if ((hit.collider.tag == "Player")||(hit.collider.tag=="brick"))
+            if (hit.collider.tag == "Player")/*||(hit.collider.tag=="brick"))*/
             {
                 float DX = Mathf.Abs(hit.rigidbody.position.x - transform.position.x);
                 float DY = Mathf.Abs(hit.rigidbody.position.y - transform.position.y);
                 if (((DX <= R) && (dx != 0)) || ((DY <= R) && (dy != 0)))
                 //Kiem tra Muc Tieu Da Trong Tam ban R khong
                 {
+                    
                     this.Shoot();
                 }
 
@@ -134,6 +135,8 @@ public class Seeker : MonoBehaviour
         {
             nextNode = findNextNode();
         }
+        if (nextNode.obstacle == 9)
+            Shoot();
 
     }
 

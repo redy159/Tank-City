@@ -52,7 +52,7 @@ public class Eagle : MonoBehaviour
         
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.tag == "bullet")
+        if ((collision.gameObject.tag == "bullet") || (collision.gameObject.tag=="bullet_enemy"))
         {
             hp--;
             this.GetComponent<SpriteRenderer>().sprite = damaged;

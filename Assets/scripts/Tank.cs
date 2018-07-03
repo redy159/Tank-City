@@ -3,7 +3,7 @@ using UnityEngine.SceneManagement;
 
 public class Tank : MonoBehaviour {
     public float speed = 15.0f;
-    public float fireRate= 5.0f;
+    public float fireRate= 0.5f;
     public Transform firePosition;
     public GameObject bullet;
     public int Type; // Loai
@@ -11,7 +11,8 @@ public class Tank : MonoBehaviour {
     public Vector3 position; // Vi Tri Xe Tang
 
     protected float timeFire = 0.0f;
-    protected Node CurrentNode; // Node Dang O
+    protected Node currentNode; // Node Dang O
+    protected Node nextNode;
     public Rigidbody2D rb;
     protected float dx = 0.0f, dy = 0.0f;
     //public GameObject projectile;
@@ -74,12 +75,16 @@ public class Tank : MonoBehaviour {
 
     public void Shoot()
     {
-        Vector2 bulletPos = transform.position;
-        GameObject a= Instantiate(bullet);
-        a.SetActive(false);
-        a.transform.position = firePosition.position;
-        a.transform.rotation = transform.rotation;
-        a.SetActive(true);
+        if (Time.time > fireRate + timeFire)
+        {
+            Vector2 bulletPos = transform.position;
+            GameObject a = Instantiate(bullet);
+            a.SetActive(false);
+            a.transform.position = firePosition.position;
+            a.transform.rotation = transform.rotation;
+            a.SetActive(true);
+            timeFire = Time.time;
+        }
     }
 
     //public Node astar(float )

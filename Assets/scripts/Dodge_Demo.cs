@@ -24,18 +24,69 @@ public class Dodge_Demo : Tank {
 		}
 		return 0;
 	}
+
+    void Move()//di chuyen toi next node
+    {
+        float step = speed * Time.deltaTime;
+        transform.position = Vector3.MoveTowards(transform.position, nextNode.getGameobj().transform.position, step);
+
+        float x = (nextNode.getGameobj().transform.position.x - currentNode.position.x);
+        float y = (nextNode.getGameobj().transform.position.y - currentNode.position.y);
+
+        if (!(x == 0 && y == 0))
+        {
+            dx = (Mathf.Abs(x) >= Mathf.Abs(y)) ? 1 : 0;
+            dy = 1 - (dx * 1);//(x < y) ? 1 : 0;
+
+            if (x > 0)
+                dx *= 1;
+            else dx *= -1;
+
+            if (y > 0)
+                dy *= 1;
+            else dy *= -1;
+        }
+        //Quay Mat
+        if (dx != 0)
+        {
+            if (dx == 1)
+            {
+                gameObject.transform.rotation = Quaternion.Euler(0, 0, -90);
+            }
+            else
+            {
+                gameObject.transform.rotation = Quaternion.Euler(0, 0, 90);
+            }
+        }
+        else if (dy != 0)
+        {
+            if (dy == 1)
+            {
+                gameObject.transform.rotation = Quaternion.Euler(0, 0, 0);
+            }
+            else
+            {
+                gameObject.transform.rotation = Quaternion.Euler(0, 0, 180);
+            }
+        }
+    }
 	
 	
 	public void Evade(int C){
 		// Them Ne
 		if (C % 4 == 0){
-			//Dan Bay Toi Theo Phuong Ngang Nen Se Ne Len Tren Hoac Xuong
-			Debug.Log("Up Or Down");
-		}
+            //Dan Bay Toi Theo Phuong Ngang Nen Se Ne Len Tren Hoac Xuong
+            if ((currentNode.TopNode != null) && (currentNode.TopNode.obstacle != 9999))
+                nextNode = currentNode.TopNode;
+            if ((currentNode.BottomNode != null) && (currentNode.BottomNode.obstacle != 9999))
+                nextNode = currentNode.BottomNode;
+        }
 		else {
-			// Dan Bay Toi Theo Phuong Doc Nen Se Ne Trai Hoac Phai
-			Debug.Log("Left Or Right");
-		}
+            if ((currentNode.LeftNode != null) && (currentNode.LeftNode.obstacle != 9999))
+                nextNode = currentNode.LeftNode;
+            if ((currentNode.RightNode != null) && (currentNode.RightNode.obstacle != 9999))
+                nextNode = currentNode.RightNode;
+        }
 					//Doi Mot Khoang Thoi Gian Clear_Time
 	}
 	public void Start ()
