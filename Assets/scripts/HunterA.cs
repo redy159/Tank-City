@@ -63,7 +63,7 @@ public class HunterA : MonoBehaviour
         if (hit.collider != null)
         {
             Debug.Log(hit.collider.tag);
-            if (hit.collider.tag == "Player")
+            if ((hit.collider.tag == "Player")||(hit.collider.tag=="brick"))
             {
                 float DX = Mathf.Abs(hit.rigidbody.position.x - transform.position.x);
                 float DY = Mathf.Abs(hit.rigidbody.position.y - transform.position.y);
