@@ -25,35 +25,10 @@ public class Hunter : MonoBehaviour
     bool canSwitch = false;
     bool waitActive = false; //so wait function wouldn't be called many times per frame
     private bool hit = false;
-    
+
 
     void Start()
-    {
-        rb = gameObject.GetComponent<Rigidbody2D>();
-        dx = 1;
-        dy = 0;
-       RaycastHit2D hit = Physics2D.Raycast(firePosition.position, new Vector2(1,0) );
-		float R = 10;
-        Debug.Log(hit.centroid);
-         
-        //Debug.Log(hit.rigidbody.name);
-		if (hit.collider != null) {
-            Debug.Log(hit.collider.transform);
-			if (hit.rigidbody.tag == "Player"){ 
-				float DX = Mathf.Abs(hit.rigidbody.position.x - transform.position.x);
-				float DY = Mathf.Abs(hit.rigidbody.position.y - transform.position.y);
-				if ((DX <= R) || (DY <= R) ){
-					//this.shoot();
-					Debug.Log(hit.rigidbody.position.x);
-					Debug.Log(hit.rigidbody.position.y);
-				}
-				
-			}
-        }
-        else 
-            Debug.Log("Null");
-    }
-
+    { }
     IEnumerator Wait()
     {
         waitActive = true;

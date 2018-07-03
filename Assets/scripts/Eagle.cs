@@ -11,15 +11,24 @@ public class Eagle : MonoBehaviour
     public Node CurrentNode;
     void CheckV(ref Node u,ref Node v,ref Queue Q, ref HashSet<int> Free ){
         //int tmp = v.getName();
-    
-        if ((v != null) && (!Free.Contains(v.getName()) )) {
-			Q.Enqueue(v);
-            v.Dist_Base = u.Dist_Base + 1;
-            Free.Add(v.getName());
+        //if (v.obstacle == 9999)
+        //{
+        //    v.Dist_Base = -1;
+        //}
+        if ((v != null) && (!Free.Contains(v.getName()) ))
+        {
+            if (v.obstacle == 9999)
+                v.Dist_Base = -1;
+            else
+            {
+                Q.Enqueue(v);
+                v.Dist_Base = u.Dist_Base + 1;
+                Free.Add(v.getName());
+            }
         }
     }
 
-    void Start(){
+    void Update(){
        
         //BFS(); Loang Ra De Tinh Khoang Cach Cai Tien BullDozer
         CurrentNode.Dist_Base = 0;

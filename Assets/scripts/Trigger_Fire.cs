@@ -5,7 +5,7 @@ using UnityEngine;
 public class Trigger_Fire : Tank {
 
 	// Use this for initialization
-	 public Rigidbody2D rb;
+	 //public Rigidbody2D rb;
 
 	 void FreeFire(){
 
@@ -46,6 +46,6 @@ public class Trigger_Fire : Tank {
 	}
 	// Update is called once per frame
 	void Update () {
-		
+        TriggerFire();
 	}
 }
