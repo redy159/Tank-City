@@ -14,12 +14,6 @@ public class steel : MonoBehaviour {
 		
 	}
 
-    void OnTriggerStay2D(Collider2D other)
-    {   
-        if (other.tag=="Node")
-        other.gameObject.GetComponent<Node>().obstacle = 9999;
-    }
-
     void OnTriggerExit2D(Collider2D other)
     {
         if (other.tag == "Node")
