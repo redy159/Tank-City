@@ -9,13 +9,13 @@ public class Dodge_Demo : Tank {
 	// Update is called once per frame
 
 	 // De Tham Khao Toc Do Bay Cua Dan
-	public int Threat_Detection(RaycastHit2D hit){
+	public int Threat_Detection(RaycastHit2D hit, ref float Clear_Time){
 		if (hit.collider != null) {
 			if ((hit.rigidbody != null ) && (hit.rigidbody.tag == "bullet")){ 
 				Debug.Log(hit.rigidbody.name);
-				float Impact_Time = hit.distance / hit.collider.gameObject.GetComponent<Bullet>().Speed; // Thoi Gian Se Xay Ra Va Cham Khoang Cach CHia cho 10 la Van Toc Vien Dan
-				float Clear_Time = (hit.distance + 1) / 10; // Thoi Gian Vien dan bay qua , 10 la Van Toc Vien Dan
-				float Evade_Time =(float)(1.2) / this.speed; // Thoi Gian Ne, 1 giay de duy chuyen qua vung co dan va 0.2 giay de dua ra quyet dinh la di dau
+				float Impact_Time = hit.distance / 10; // Thoi Gian Se Xay Ra Va Cham Khoang Cach CHia cho 10 la Van Toc Vien Dan
+				 Clear_Time = (hit.distance + 1) / 10; // Thoi Gian Vien dan bay qua , 10 la Van Toc Vien Dan
+				float Evade_Time =(float)(1.2) / this.speed; // Thoi Gian Ne, 1 khoang cach de di chuyen qua vung co dan va 0.2 khoang cach tru hao de dua ra quyet dinh la di dau
 				if (Impact_Time > Evade_Time ){
 					return 1;
 				}
@@ -24,79 +24,52 @@ public class Dodge_Demo : Tank {
 		}
 		return 0;
 	}
-
-    void Move()//di chuyen toi next node
-    {
-        float step = speed * Time.deltaTime;
-        transform.position = Vector3.MoveTowards(transform.position, nextNode.getGameobj().transform.position, step);
-
-        float x = (nextNode.getGameobj().transform.position.x - currentNode.position.x);
-        float y = (nextNode.getGameobj().transform.position.y - currentNode.position.y);
-
-        if (!(x == 0 && y == 0))
-        {
-            dx = (Mathf.Abs(x) >= Mathf.Abs(y)) ? 1 : 0;
-            dy = 1 - (dx * 1);//(x < y) ? 1 : 0;
-
-            if (x > 0)
-                dx *= 1;
-            else dx *= -1;
-
-            if (y > 0)
-                dy *= 1;
-            else dy *= -1;
-        }
-        //Quay Mat
-        if (dx != 0)
-        {
-            if (dx == 1)
-            {
-                gameObject.transform.rotation = Quaternion.Euler(0, 0, -90);
-            }
-            else
-            {
-                gameObject.transform.rotation = Quaternion.Euler(0, 0, 90);
-            }
-        }
-        else if (dy != 0)
-        {
-            if (dy == 1)
-            {
-                gameObject.transform.rotation = Quaternion.Euler(0, 0, 0);
-            }
-            else
-            {
-                gameObject.transform.rotation = Quaternion.Euler(0, 0, 180);
-            }
-        }
-    }
 	
-	
-	public void Evade(int C){
+	bool Reachable(Node u){
+		if (u == null || u.obstacle == 9999){
+			return false;
+		}
+		return true;
+	}
+	IEnumerator Wait(float Time) { 
+		yield return new WaitForSeconds(Time);
+	}
+	public void Evade(int C,float Clear_Time){
 		// Them Ne
 		if (C % 4 == 0){
-            //Dan Bay Toi Theo Phuong Ngang Nen Se Ne Len Tren Hoac Xuong
-            if ((currentNode.TopNode != null) && (currentNode.TopNode.obstacle != 9999))
-                nextNode = currentNode.TopNode;
-            if ((currentNode.BottomNode != null) && (currentNode.BottomNode.obstacle != 9999))
-                nextNode = currentNode.BottomNode;
-        }
+			//Dan Bay Toi Theo Phuong Ngang Nen Se Ne Len Tren Hoac Xuong
+			Node u = this.currentNode.TopNode;
+			if (Reachable(u)){
+				nextNode = u;
+			}
+			else {
+				u = this.currentNode.BottomNode;
+				if (Reachable(u)){
+					nextNode = u;
+				}
+				
+			}
+			Wait(Clear_Time);
+			Debug.Log("Up Or Down");
+		}
 		else {
-            if ((currentNode.LeftNode != null) && (currentNode.LeftNode.obstacle != 9999))
-                nextNode = currentNode.LeftNode;
-            if ((currentNode.RightNode != null) && (currentNode.RightNode.obstacle != 9999))
-                nextNode = currentNode.RightNode;
-        }
-					//Doi Mot Khoang Thoi Gian Clear_Time
+			// Dan Bay Toi Theo Phuong Doc Nen Se Ne Trai Hoac Phai
+			Node u = this.currentNode.LeftNode;
+			if (Reachable(u)){
+				nextNode = u;
+			}
+			else {
+				u = this.currentNode.RightNode;
+				if (Reachable(u)){
+					nextNode = u;
+				}
+				
+			}
+			Wait(Clear_Time);
+		}
+		//Doi Mot Khoang Thoi Gian Clear_Time
 	}
-	public void Start ()
-    {
-        rb = gameObject.GetComponent<Rigidbody2D>(); 
-		//Khoi Tao
-		
-		
-    }
-	void Update() {
+	void Dodge(){
 		RaycastHit2D R = Physics2D.Raycast(transform.position, Vector2.right ); 
 		RaycastHit2D L = Physics2D.Raycast(transform.position, Vector2.left );
 		RaycastHit2D D = Physics2D.Raycast(transform.position, Vector2.down );
@@ -104,9 +77,13 @@ public class Dodge_Demo : Tank {
 
 		int code = 0; //Bat Chuoc Cohen – Sutherland bitmask
 		bool Died = false;
-		switch (Threat_Detection(R)){
+		float tmp = -1;
+		float Clear_Time = 0; 
+		switch (Threat_Detection(R,ref tmp)){
 			case 1:{
 				code |= 8;
+				if (Clear_Time < tmp)
+					Clear_Time = tmp;
 				break;
 			}
 			case 2:{
@@ -116,26 +93,34 @@ public class Dodge_Demo : Tank {
 			default:
 				break;
       	}
-		switch (Threat_Detection(L)){
-			case 1:
+		switch (Threat_Detection(L,ref tmp)){
+			case 1:{
 				code |= 4;
+				if (Clear_Time < tmp)
+					Clear_Time = tmp;
 				break;
+			}
 			case 2:
 				Died = true;
 				break;
       	}
-		 switch (Threat_Detection(D)){
-			case 1:
+		switch (Threat_Detection(D,ref tmp)){
+			case 1:{
 				code |= 2;
+				if (Clear_Time < tmp)
+					Clear_Time = tmp;
 				break;
+			}
 			case 2:
 				Died = true;
 				break;
 
       	}
-		  switch (Threat_Detection(U)){
+		switch (Threat_Detection(U,ref tmp)){
 			case 1:{
-				code |= 1;
+				code |= 8;
+				if (Clear_Time < tmp)
+					Clear_Time = tmp;
 				break;
 			}
 			case 2:{
@@ -149,15 +134,24 @@ public class Dodge_Demo : Tank {
 		Debug.ClearDeveloperConsole();
 		if (!Died){
 			if (code != 0){
-				Evade(code); // Ne
+				Evade(code,Clear_Time); // Ne
 			}
 			else 
 				Debug.Log("Clear"); // An Toan
 		} 
 		else {
 			//Chet Roi Khoi Ne
-			Debug.Log("Lol No Need To Do Shit Cause U Will Be Died Anyway");
+			Debug.Log("Lol No Need To Dodge Cause U Will Be Died Anyway");
 		}
-		
+
 	}
+	void Update() {
+		Dodge();
+		//Contiue Wev Moving We Are
+		
+
+        
+	}
+
+
 }
