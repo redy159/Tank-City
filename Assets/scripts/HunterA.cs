@@ -267,31 +267,35 @@ public class HunterA : MonoBehaviour
 
             foreach (Node q in nextPoint)
             {
-                //Node q isnot in close
-                if (close.IndexOf(q) != -1)
+                //Node q is not in close and open
+                if (close.IndexOf(q) == -1 && open.IndexOf(q) == -1)
                 {
-                    if (g[int.Parse(q.getGameobj().name)] > (g[int.Parse(currentPoint.getGameobj().name)] + calculateHValue(currentPoint.getGameobj(), q.getGameobj())))
-                    {
-                        close.Remove(q);
-                        open.Add(q);
-                    }
+                    g[q.getName()] = g[currentPoint.getName()] + calculateHValue(currentPoint.getGameobj(), q.getGameobj()) + q.obstacle;
+                    f_for_mainTower[int.Parse(q.getGameobj().name)] = g[int.Parse(q.getGameobj().name)] + calculateHValue(mainTower, q.getGameobj());
+                    f_for_player[int.Parse(q.getGameobj().name)] = g[int.Parse(q.getGameobj().name)] + calculateHValue(player, q.getGameobj());
+                    pre[q.getName()] = currentPoint;
+                    open.Add(q);
                 }
                 else
                 {
                     //Node q is in open
-                    if (open.IndexOf(q) == -1)
-                    {
-                        g[int.Parse(q.getGameobj().name)] = g[int.Parse(currentPoint.getGameobj().name)] + q.obstacle;
-                        f_for_mainTower[int.Parse(q.getGameobj().name)] = g[int.Parse(q.getGameobj().name)] + calculateHValue(mainTower, q.getGameobj());
-                        f_for_player[int.Parse(q.getGameobj().name)] = g[int.Parse(q.getGameobj().name)] + calculateHValue(player, q.getGameobj());
-                        pre[int.Parse(q.getGameobj().name)] = currentPoint;
-                        open.Add(q);
-                    }
-                    //Node q isnot in close
                     if (open.IndexOf(q) != -1)
-                    {
-                        if (g[int.Parse(q.getGameobj().name)] > g[int.Parse(currentPoint.getGameobj().name)] + calculateHValue(currentPoint.getGameobj(), q.getGameobj()))
+                        if (g[q.getName()] > g[currentPoint.getName()] + calculateHValue(currentPoint.getGameobj(), q.getGameobj()))
                         {
+                            g[int.Parse(q.getGameobj().name)] = g[int.Parse(currentPoint.getGameobj().name)] + calculateHValue(currentPoint.getGameobj(), q.getGameobj()) + q.obstacle;
+                            f_for_mainTower[int.Parse(q.getGameobj().name)] = g[int.Parse(q.getGameobj().name)] + calculateHValue(mainTower, q.getGameobj());
+                            f_for_player[int.Parse(q.getGameobj().name)] = g[int.Parse(q.getGameobj().name)] + calculateHValue(player, q.getGameobj());
+                            pre[int.Parse(q.getGameobj().name)] = currentPoint;
+                            open.Add(q);
+                        }
+
+                    //Node q is in close
+                    if (close.IndexOf(q) == -1)
+                    {
+                        if (g[q.getName()] > g[currentPoint.getName()] + calculateHValue(currentPoint.getGameobj(), q.getGameobj()))
+                        {
+                            close.Remove(q);
+                            open.Add(q);
                             g[int.Parse(q.getGameobj().name)] = g[int.Parse(currentPoint.getGameobj().name)] + q.obstacle;
                             f_for_mainTower[int.Parse(q.getGameobj().name)] = g[int.Parse(q.getGameobj().name)] + calculateHValue(mainTower, q.getGameobj());
                             f_for_player[int.Parse(q.getGameobj().name)] = g[int.Parse(q.getGameobj().name)] + calculateHValue(player, q.getGameobj());

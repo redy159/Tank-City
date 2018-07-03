@@ -187,11 +187,8 @@ public class Seeker : MonoBehaviour
         f = new float[180];
 
         pre = new Node[180];
-        g[int.Parse(currentNode.getGameobj().name)] = 0;
-        f[int.Parse(currentNode.getGameobj().name)] = calculateHValue(currentNode.getGameobj(), target);
-
-        // xác định vị trí ng chơi
-        //target = playerControl.getCurentNode();
+        g[currentNode.getName()] = 0;
+        f[currentNode.getName()] = calculateHValue(currentNode.getGameobj(), target);
 
         List<Node> open = new List<Node>();
         List<Node> close = new List<Node>();
@@ -204,10 +201,10 @@ public class Seeker : MonoBehaviour
             //find the first current Node as minnimun in open
             foreach (Node node in open)
             {
-                if (g[int.Parse(node.getGameobj().name)] + calculateHValue(node.getGameobj(), target) < min)
+                if (g[node.getName()] + calculateHValue(node.getGameobj(), target) < min)
                 {
                     currentPoint = node;
-                    min = g[int.Parse(node.getGameobj().name)] + calculateHValue(currentPoint.getGameobj(), target);
+                    min = g[node.getName()] + calculateHValue(currentPoint.getGameobj(), target);
                 }
             }
 
@@ -243,38 +240,36 @@ public class Seeker : MonoBehaviour
 
             foreach (Node q in nextPoint)
             {
-                //Node q isnot in close
-                if (close.IndexOf(q) != -1)
+                //Node q is not in close and open
+                if (close.IndexOf(q) == -1 && open.IndexOf(q) == -1)
                 {
-                    if (g[int.Parse(q.getGameobj().name)] > g[int.Parse(currentPoint.getGameobj().name)] + calculateHValue(currentPoint.getGameobj(), q.getGameobj()))
+                    g[q.getName()] = g[currentPoint.getName()] + calculateHValue(currentPoint.getGameobj(), q.getGameobj()) + q.obstacle;
+                    f[q.getName()] = g[q.getName()] + calculateHValue(target, q.getGameobj());
+                    pre[q.getName()] = currentPoint;
+                    open.Add(q);
+                }
+
+                //Node q is in open
+                if (open.IndexOf(q) != -1)
+                    if (g[q.getName()] > g[currentPoint.getName()] + calculateHValue(currentPoint.getGameobj(), q.getGameobj()))
+                    {
+                        g[q.getName()] = g[currentPoint.getName()] + calculateHValue(currentPoint.getGameobj(), q.getGameobj()) + q.obstacle;
+                        f[q.getName()] = g[q.getName()] + calculateHValue(target, q.getGameobj());
+                        pre[q.getName()] = currentPoint;
+                    }
+                //Node q is in close
+                if (close.IndexOf(q) == -1)
+                {
+                    if (g[q.getName()] > g[currentPoint.getName()] + calculateHValue(currentPoint.getGameobj(), q.getGameobj()))
                     {
                         close.Remove(q);
                         open.Add(q);
-                    }
-                }
-                else
-                {
-                    //Node q is in open
-                    if (open.IndexOf(q) == -1)
-                    {
-                        g[int.Parse(q.getGameobj().name)] = g[int.Parse(currentPoint.getGameobj().name)] + q.obstacle;
-                        f[int.Parse(q.getGameobj().name)] = g[int.Parse(q.getGameobj().name)] + calculateHValue(target, q.getGameobj());
-                        pre[int.Parse(q.getGameobj().name)] = currentPoint;
-                        open.Add(q);
-                    }
-                    //Node q isnot in close
-                    if (open.IndexOf(q) != -1)
-                    {
-                        if (g[int.Parse(q.getGameobj().name)] > g[int.Parse(currentPoint.getGameobj().name)] + calculateHValue(currentPoint.getGameobj(), q.getGameobj()))
-                        {
-                            g[int.Parse(q.getGameobj().name)] = g[int.Parse(currentPoint.getGameobj().name)] + q.obstacle;
-                            f[int.Parse(q.getGameobj().name)] = g[int.Parse(q.getGameobj().name)] + calculateHValue(target, q.getGameobj());
-                            pre[int.Parse(q.getGameobj().name)] = currentPoint;
-                        }
+                        g[q.getName()] = g[currentPoint.getName()] + q.obstacle;
+                        f[q.getName()] = g[q.getName()] + calculateHValue(target, q.getGameobj());
+                        pre[q.getName()] = currentPoint;
                     }
                 }
             }
-
         }
 
         try
