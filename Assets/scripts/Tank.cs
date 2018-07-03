@@ -3,12 +3,14 @@ using UnityEngine.SceneManagement;
 
 public class Tank : MonoBehaviour {
     public float speed = 15.0f;
+    public float fireRate= 5.0f;
     public Transform firePosition;
     public GameObject bullet;
     public int Type; // Loai
     public int Health = 1; // Mau
     public Vector3 position; // Vi Tri Xe Tang
 
+    protected float timeFire = 0.0f;
     protected Node CurrentNode; // Node Dang O
     public Rigidbody2D rb;
     protected float dx = 0.0f, dy = 0.0f;
