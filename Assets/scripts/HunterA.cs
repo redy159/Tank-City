@@ -54,7 +54,6 @@ public class HunterA : Tank
     // return heuristic value
     public override Node findMinNode(ref float[] fBase,ref float[] fPlayer,ref List<Node> open)
     {
-        Debug.Log("Called H");
         float min = 10000;
         Node currentPoint = new Node();
         foreach (Node node in open)
@@ -71,6 +70,13 @@ public class HunterA : Tank
             }
         }
         return currentPoint;
+    }
+
+    public override float calH(GameObject a, GameObject b)
+    {
+        if (b.tag == "base")
+            return a.GetComponent<Node>().Dist_Base;
+        return  base.calH(a,b);//base khong phai Base Nha Chinh Dau Ma Lop Cha
     }
     public override void calF(ref float[] fBase, ref float[] fPlayer, Node q)
     {

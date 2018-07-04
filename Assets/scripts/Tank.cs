@@ -138,11 +138,16 @@ public class Tank : MonoBehaviour
         //RaycastHit2D hit = Physics2D.Raycast(firePosition.position, new Vector2(1,0) );
         float R = 10;
         Debug.Log(hit.centroid);
+        
 
         //Debug.Log(hit.rigidbody.name);
         if (hit.collider != null)
         {
-            Debug.Log(hit.collider.tag);
+            if (this.tag == "hunter"){
+                if ((hit.collider.tag == "base")){
+                    this.Shoot();
+                }
+            }
             if ((hit.collider.tag == "Player"))
             {
                 float DX = Mathf.Abs(hit.rigidbody.position.x - transform.position.x);
