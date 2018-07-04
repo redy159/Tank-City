@@ -88,7 +88,7 @@ using System.Linq;
     } // IsConsistent
   } // PriorityQueue
  
-public class Tank : MonoBehaviour {
+public class Tank2 : MonoBehaviour {
     public float speed = 15.0f;
     public float fireRate = 0.5f;
     public Transform firePosition;
@@ -290,25 +290,19 @@ public class Tank : MonoBehaviour {
             }
         }
 
-        try
+        /*Node nextMove = new Node();
+        int u = int.Parse(target.name);
+        while (true)
         {
-            Node nextMove = new Node();
-            int u = int.Parse(target.name);
-            while (true)
+            nextMove = pre[u];
+            if (nextMove.getGameobj().name == currentNode.name)
             {
-                nextMove = pre[u];
-                if (nextMove.getGameobj().name == currentNode.name)
-                {
-                    break;
-                }
-                u = int.Parse(nextMove.getGameobj().name);
+                break;
             }
-            return GameObject.Find(u + "").GetComponent<Node>();
+            u = int.Parse(nextMove.getGameobj().name);
         }
-        catch (System.Exception e)
-        {
-            //currentNode = Randomnode(currentNode); //excute ramdomnode
-        }
+        return GameObject.Find(u + "").GetComponent<Node>();*/
+
         return currentNode;
     }
 }

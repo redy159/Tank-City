@@ -44,10 +44,15 @@ public class Node : MonoBehaviour
 
     void OnTriggerStay2D(Collider2D other)
     {
-        if (other.tag == "steel")
+        if ((other.tag == "steel")||(other.tag=="bulldozer")||(other.tag=="seeker")||(other.tag=="hunter"))
             obstacle = 9999;
         if (other.tag == "brick")
-            obstacle = 9;
+            obstacle = 1;
+    }
+
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        obstacle = 0;
     }
 }
 

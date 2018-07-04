@@ -49,7 +49,7 @@ public class Dodge_Demo : Tank {
 				}
 				
 			}
-			Wait(Clear_Time);
+			//Wait(Clear_Time);
 			Debug.Log("Up Or Down");
 		}
 		else {
@@ -65,10 +65,58 @@ public class Dodge_Demo : Tank {
 				}
 				
 			}
-			Wait(Clear_Time);
-		}
+        }
 		//Doi Mot Khoang Thoi Gian Clear_Time
 	}
+    private void Move()
+    {
+        float step = speed * Time.deltaTime;
+        if (nextNode != null)
+        {
+            transform.position = Vector3.MoveTowards(transform.position, nextNode.getGameobj().transform.position, step);
+
+            float sx = (nextNode.getGameobj().transform.position.x - currentNode.position.x);
+            float sy = (nextNode.getGameobj().transform.position.y - currentNode.position.y);
+
+            if (!(sx == 0 && sy == 0))
+            {
+                dx = (Mathf.Abs(sx) >= Mathf.Abs(sy)) ? 1 : 0;
+                dy = 1 - (dx * 1);//(x < y) ? 1 : 0;
+
+                if (sx > 0)
+                    dx *= 1;
+                else dx *= -1;
+
+                if (sy > 0)
+                    dy *= 1;
+                else dy *= -1;
+            }
+            //Quay Mat
+            if (dx != 0)
+            {
+                if (dx == 1)
+                {
+                    gameObject.transform.rotation = Quaternion.Euler(0, 0, -90);
+                }
+                else
+                {
+                    gameObject.transform.rotation = Quaternion.Euler(0, 0, 90);
+                }
+            }
+            else if (dy != 0)
+            {
+                if (dy == 1)
+                {
+                    gameObject.transform.rotation = Quaternion.Euler(0, 0, 0);
+                }
+                else
+                {
+                    gameObject.transform.rotation = Quaternion.Euler(0, 0, 180);
+                }
+            }
+        }
+    }
+    
 	void Dodge(){
 		RaycastHit2D R = Physics2D.Raycast(transform.position, Vector2.right ); 
 		RaycastHit2D L = Physics2D.Raycast(transform.position, Vector2.left );
@@ -143,9 +191,15 @@ public class Dodge_Demo : Tank {
 			//Chet Roi Khoi Ne
 			Debug.Log("Lol No Need To Dodge Cause U Will Be Died Anyway");
 		}
-
+        Move();
 	}
-	void Update() {
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        currentNode = collision.gameObject.GetComponent<Node>();
+    }
+
+    void Update() {
 		Dodge();
 		//Contiue Wev Moving We Are
 		
