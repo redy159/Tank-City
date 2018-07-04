@@ -196,79 +196,16 @@ public class Tank : MonoBehaviour
         return Mathf.Sqrt((xa - xb) * (xa - xb) + (ya - yb) * (ya - yb));
     }
 
-
-    protected virtual Node FindMinNode(ref float[] fBase, ref float[] fPlayer, ref List<Node> open);
-
-    private void calG(ref float[] g, Node q)
+    // find all acceptable next point with standind point
+    protected Node findNextNode() //create node findNextNode
     {
-        g[int.Parse(q.getGameobj().name)] = g[int.Parse(currentPoint.getGameobj().name)] + q.obstacle;
-    }
-    private void Init()
-    {
+        // chỗ này đề a sao ra Node tiếp theo
         g = new float[180];
-        fbase = new float[180];
-        fplayer = new float[180];
+        f = new float[180];
 
         pre = new Node[180];
-        g[int.Parse(currentNode.getGameobj().name)] = 0;
-        fbase[int.Parse(currentNode.getGameobj().name)] = calculateHValue(currentNode.getGameobj(), Base);
-        fplayer[int.Parse(currentNode.getGameobj().name)] = calculateHValue(currentNode.getGameobj(), player);
-    }
-
-    Node TraceBack(Node currentPoint)
-    {
-        if (currentPoint.name == Base.name)
-        {
-            try
-            {
-                Node nextMove = new Node();
-                int u = int.Parse(Base.name);
-                while (true)
-                {
-                    nextMove = pre[u];
-                    if (nextMove.getGameobj().name == currentNode.name)
-                    {
-                        break;
-                    }
-                    u = int.Parse(nextMove.getGameobj().name);
-                }
-                return GameObject.Find(u + "").GetComponent<Node>();
-            }
-            catch (System.Exception e)
-            {
-                //currentNode = Randomnode(currentNode); //excute ramdomnode
-            }
-        }
-
-        if (currentPoint.name == player.name)
-        {
-            try
-            {
-                Node nextMove = new Node();
-                int u = int.Parse(player.name);
-                while (true)
-                {
-                    nextMove = pre[u];
-                    if (nextMove.getGameobj().name == currentNode.name)
-                    {
-                        break;
-                    }
-                    u = int.Parse(nextMove.getGameobj().name);
-                }
-                return GameObject.Find(u + "").GetComponent<Node>();
-            }
-            catch (System.Exception e)
-            {
-                //currentNode = Randomnode(currentNode); //excute ramdomnode
-            }
-        }
-        return currentNode;
-    }
-
-    // find all acceptable next point with standind point
-    private Node findNextNode() //create node findNextNode
-    {
-        Init();
+        g[currentNode.getName()] = 0;
+        f[currentNode.getName()] = calculateHValue(currentNode.getGameobj(), target);
 
         // xác định vị trí ng chơi
         //target = playerControl.getCurentNode();
@@ -278,15 +215,23 @@ public class Tank : MonoBehaviour
         open.Add(currentNode);
         while (open.Count != 0)
         {
-            currentPoint = findMinNode(ref fbase, ref fplayer, ref open);
-
+            Node currentPoint = new Node();
+            float min = 100000;
 
             //find the first current Node as minnimun in open
+            foreach (Node node in open)
+            {
+                if (g[node.getName()] + calculateHValue(node.getGameobj(), target) < min)
+                {
+                    currentPoint = node;
+                    min = g[node.getName()] + calculateHValue(currentPoint.getGameobj(), target);
+                }
+            }
 
             //if (target.transform.position.x == currentPoint.getGameobj().transform.position.x || target.transform.position.y == currentPoint.getGameobj().transform.position.y)//chay toi eage
-            if ((Base.name == currentPoint.name) || (player.name == currentPoint.name))
+            if (target.name == currentPoint.name)
             {
-                break;
+                break;  //shoot for AI
             }
 
             open.Remove(currentPoint);
@@ -315,41 +260,58 @@ public class Tank : MonoBehaviour
 
             foreach (Node q in nextPoint)
             {
-                //Node q isnot in close
-                if (close.IndexOf(q) != -1)
+                //Node q is not in close and open
+                if (close.IndexOf(q) == -1 && open.IndexOf(q) == -1)
                 {
-                    if (g[int.Parse(q.getGameobj().name)] > (g[int.Parse(currentPoint.getGameobj().name)] + calculateHValue(currentPoint.getGameobj(), q.getGameobj())))
+                    g[q.getName()] = g[currentPoint.getName()] + calculateHValue(currentPoint.getGameobj(), q.getGameobj()) + q.obstacle;
+                    f[q.getName()] = g[q.getName()] + calculateHValue(target, q.getGameobj());
+                    pre[q.getName()] = currentPoint;
+                    open.Add(q);
+                }
+
+                //Node q is in open
+                if (open.IndexOf(q) != -1)
+                    if (g[q.getName()] > g[currentPoint.getName()] + calculateHValue(currentPoint.getGameobj(), q.getGameobj()))
+                    {
+                        g[q.getName()] = g[currentPoint.getName()] + calculateHValue(currentPoint.getGameobj(), q.getGameobj()) + q.obstacle;
+                        f[q.getName()] = g[q.getName()] + calculateHValue(target, q.getGameobj());
+                        pre[q.getName()] = currentPoint;
+                    }
+                //Node q is in close
+                if (close.IndexOf(q) == -1)
+                {
+                    if (g[q.getName()] > g[currentPoint.getName()] + calculateHValue(currentPoint.getGameobj(), q.getGameobj()))
                     {
                         close.Remove(q);
                         open.Add(q);
-                    }
-                }
-                else
-                {
-                    //Node q is in open
-                    if (open.IndexOf(q) == -1)
-                    {
-                        calG(ref g, q);
-                        calF(ref fbase, ref fplayer, q);
-                        pre[int.Parse(q.getGameobj().name)] = currentPoint;
-                        open.Add(q);
-                    }
-                    //Node q isnot in close
-                    if (open.IndexOf(q) != -1)
-                    {
-                        if (g[int.Parse(q.getGameobj().name)] > g[int.Parse(currentPoint.getGameobj().name)] + calculateHValue(currentPoint.getGameobj(), q.getGameobj()))
-                        {
-                            calG(ref g, q);
-                            calF(ref fbase, ref fplayer, q);
-                            pre[int.Parse(q.getGameobj().name)] = currentPoint;
-                        }
+                        g[q.getName()] = g[currentPoint.getName()] + q.obstacle;
+                        f[q.getName()] = g[q.getName()] + calculateHValue(target, q.getGameobj());
+                        pre[q.getName()] = currentPoint;
                     }
                 }
             }
-
         }
-        return TraceBack(currentPoint);
 
+        try
+        {
+            Node nextMove = new Node();
+            int u = int.Parse(target.name);
+            while (true)
+            {
+                nextMove = pre[u];
+                if (nextMove.getGameobj().name == currentNode.name)
+                {
+                    break;
+                }
+                u = int.Parse(nextMove.getGameobj().name);
+            }
+            return GameObject.Find(u + "").GetComponent<Node>();
+        }
+        catch (System.Exception e)
+        {
+            //currentNode = Randomnode(currentNode); //excute ramdomnode
+        }
+        return currentNode;
     }
 
     protected virtual void Shoot()
