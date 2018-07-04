@@ -12,12 +12,12 @@ public class HunterA : MonoBehaviour
     private float timeFire = 0.0f;
     public GameObject bullet;
 
-    public GameObject mainTower;// main tower
+    public GameObject Base;// main tower
     public GameObject player;// player
     //private GameObject playerControl; //excute control
     private Node currentNode, nextNode;
-    private float[] g, f_for_mainTower, f_for_player;
     private Node[] pre;
+    private float []g, fbase, fplayer;
     public const int row = 18;
     public const int col = 10;
     public float speed = 15.0f;
@@ -186,24 +186,98 @@ public class HunterA : MonoBehaviour
         return Mathf.Sqrt((xa - xb) * (xa - xb) + (ya - yb) * (ya - yb));
     }
 
-    //private Node findMinNode(float[] f_for_mainTower, float[] f_for_player, List<Node> open)
-    //{
-    //    Node result;
-       
-    //    return result;
-    //}
+
+    private Node findMinNode(ref float[] fBase,ref float[] fPlayer,ref List<Node> open)
+    {   
+        float min = 10000;
+        Node currentPoint = new Node();
+        foreach (Node node in open)
+        {
+            if (g[int.Parse(node.getGameobj().name)] + calculateHValue(node.getGameobj(), Base) < min)
+            {
+                currentPoint = node;
+                min = g[int.Parse(node.getGameobj().name)] + calculateHValue(currentPoint.getGameobj(), Base);
+            }
+            if (g[int.Parse(node.getGameobj().name)] + calculateHValue(node.getGameobj(), player) < min)
+            {
+                currentPoint = node;
+                min = g[int.Parse(node.getGameobj().name)] + calculateHValue(currentPoint.getGameobj(), player);
+            }
+        }
+        return currentPoint;
+    }
+    private void calF(ref float[] fBase, ref float[] fPlayer, Node q)
+    {
+        fbase[int.Parse(q.getGameobj().name)] = g[int.Parse(q.getGameobj().name)] + calculateHValue(Base, q.getGameobj());
+        fplayer[int.Parse(q.getGameobj().name)] = g[int.Parse(q.getGameobj().name)] + calculateHValue(player, q.getGameobj());
+    }
+
+    private void Init()
+    {
+        g = new float[180];
+        fbase = new float[180];
+        fplayer = new float[180];
+
+        pre = new Node[180];
+        g[int.Parse(currentNode.getGameobj().name)] = 0;
+       fbase[int.Parse(currentNode.getGameobj().name)] = calculateHValue(currentNode.getGameobj(), Base);
+       fplayer[int.Parse(currentNode.getGameobj().name)] = calculateHValue(currentNode.getGameobj(), player);
+    }
+
+    Node TraceBack(Node currentPoint)
+    {
+        if (currentPoint.name == Base.name)
+        {
+            try
+            {
+                Node nextMove = new Node();
+                int u = int.Parse(Base.name);
+                while (true)
+                {
+                    nextMove = pre[u];
+                    if (nextMove.getGameobj().name == currentNode.name)
+                    {
+                        break;
+                    }
+                    u = int.Parse(nextMove.getGameobj().name);
+                }
+                return GameObject.Find(u + "").GetComponent<Node>();
+            }
+            catch (System.Exception e)
+            {
+                //currentNode = Randomnode(currentNode); //excute ramdomnode
+            }
+        }
+
+        if (currentPoint.name == player.name)
+        {
+            try
+            {
+                Node nextMove = new Node();
+                int u = int.Parse(player.name);
+                while (true)
+                {
+                    nextMove = pre[u];
+                    if (nextMove.getGameobj().name == currentNode.name)
+                    {
+                        break;
+                    }
+                    u = int.Parse(nextMove.getGameobj().name);
+                }
+                return GameObject.Find(u + "").GetComponent<Node>();
+            }
+            catch (System.Exception e)
+            {
+                //currentNode = Randomnode(currentNode); //excute ramdomnode
+            }
+        }
+        return currentNode;
+    }
 
     // find all acceptable next point with standind point
     private Node findNextNode() //create node findNextNode
     {
-        g = new float[180];
-        f_for_mainTower = new float[180];
-        f_for_player = new float[180];
-
-        pre = new Node[180];
-        g[int.Parse(currentNode.getGameobj().name)] = 0;
-        f_for_mainTower[int.Parse(currentNode.getGameobj().name)] = calculateHValue(currentNode.getGameobj(), mainTower);
-        f_for_player[int.Parse(currentNode.getGameobj().name)] = calculateHValue(currentNode.getGameobj(), player);
+        Init();
 
         // xác định vị trí ng chơi
         //target = playerControl.getCurentNode();
@@ -213,35 +287,15 @@ public class HunterA : MonoBehaviour
         open.Add(currentNode);
         while (open.Count != 0)
         {
-            currentPoint = new Node();
-          
-            float min = 10000;
+            currentPoint = findMinNode(ref fbase, ref fplayer, ref open);
+
 
             //find the first current Node as minnimun in open
-            foreach (Node node in open)
-            {
-                if (g[int.Parse(node.getGameobj().name)] + calculateHValue(node.getGameobj(), mainTower) < min)
-                {
-                    currentPoint = node;
-                    min = g[int.Parse(node.getGameobj().name)] + calculateHValue(currentPoint.getGameobj(), mainTower);
-                 ;
-                }
-            }
-
-            foreach (Node node in open)
-            {
-                if (g[int.Parse(node.getGameobj().name)] + calculateHValue(node.getGameobj(), player) < min)
-                {
-                    currentPoint = node;
-                    min = g[int.Parse(node.getGameobj().name)] + calculateHValue(currentPoint.getGameobj(), player);
-                    
-                }
-            }
 
             //if (target.transform.position.x == currentPoint.getGameobj().transform.position.x || target.transform.position.y == currentPoint.getGameobj().transform.position.y)//chay toi eage
-            if ((mainTower.name == currentPoint.name) || (player.name == currentPoint.name))
+            if ((Base.name == currentPoint.name) || (player.name == currentPoint.name))
             {
-                break;  //shoot for AI
+                break;
             }
 
             open.Remove(currentPoint);
@@ -285,8 +339,7 @@ public class HunterA : MonoBehaviour
                     if (open.IndexOf(q) == -1)
                     {
                         g[int.Parse(q.getGameobj().name)] = g[int.Parse(currentPoint.getGameobj().name)] + q.obstacle;
-                        f_for_mainTower[int.Parse(q.getGameobj().name)] = g[int.Parse(q.getGameobj().name)] + calculateHValue(mainTower, q.getGameobj());
-                        f_for_player[int.Parse(q.getGameobj().name)] = g[int.Parse(q.getGameobj().name)] + calculateHValue(player, q.getGameobj());
+                        calF(ref fbase, ref fplayer, q);
                         pre[int.Parse(q.getGameobj().name)] = currentPoint;
                         open.Add(q);
                     }
@@ -296,8 +349,7 @@ public class HunterA : MonoBehaviour
                         if (g[int.Parse(q.getGameobj().name)] > g[int.Parse(currentPoint.getGameobj().name)] + calculateHValue(currentPoint.getGameobj(), q.getGameobj()))
                         {
                             g[int.Parse(q.getGameobj().name)] = g[int.Parse(currentPoint.getGameobj().name)] + q.obstacle;
-                            f_for_mainTower[int.Parse(q.getGameobj().name)] = g[int.Parse(q.getGameobj().name)] + calculateHValue(mainTower, q.getGameobj());
-                            f_for_player[int.Parse(q.getGameobj().name)] = g[int.Parse(q.getGameobj().name)] + calculateHValue(player, q.getGameobj());
+                            calF(ref fbase, ref fplayer, q);
                             pre[int.Parse(q.getGameobj().name)] = currentPoint;
                         }
                     }
@@ -305,53 +357,8 @@ public class HunterA : MonoBehaviour
             }
 
         }
-
-        if (currentPoint.name == mainTower.name)
-        {
-            try
-            {
-                Node nextMove = new Node();
-                int u = int.Parse(mainTower.name);
-                while (true)
-                {
-                    nextMove = pre[u];
-                    if (nextMove.getGameobj().name == currentNode.name)
-                    {
-                        break;
-                    }
-                    u = int.Parse(nextMove.getGameobj().name);
-                }
-                return GameObject.Find(u + "").GetComponent<Node>();
-            }
-            catch (System.Exception e)
-            {
-                //currentNode = Randomnode(currentNode); //excute ramdomnode
-            }
-        }
-
-        if (currentPoint.name == player.name)
-        {
-            try
-            {
-                Node nextMove = new Node();
-                int u = int.Parse(player.name);
-                while (true)
-                {
-                    nextMove = pre[u];
-                    if (nextMove.getGameobj().name == currentNode.name)
-                    {
-                        break;
-                    }
-                    u = int.Parse(nextMove.getGameobj().name);
-                }
-                return GameObject.Find(u + "").GetComponent<Node>();
-            }
-            catch (System.Exception e)
-            {
-                //currentNode = Randomnode(currentNode); //excute ramdomnode
-            }
-        }
-        return currentNode;
+        return TraceBack(currentPoint);
+        
     }
 
     public void Shoot()

@@ -182,6 +182,9 @@ public class Tank : MonoBehaviour
         return Mathf.Sqrt((xa - xb) * (xa - xb) + (ya - yb) * (ya - yb));
     }
 
+   
+    private float calF(f[] float,Node)
+
     // find all acceptable next point with standind point
     private Node findNextNode() //create node findNextNode
     {
@@ -249,8 +252,8 @@ public class Tank : MonoBehaviour
                 //Node q is not in close and open
                 if (close.IndexOf(q) == -1 && open.IndexOf(q) == -1)
                 {
-                    g[q.getName()] = g[currentPoint.getName()] + calculateHValue(currentPoint.getGameobj(), q.getGameobj()) + q.obstacle;
-                    f[q.getName()] = g[q.getName()] + calculateHValue(target, q.getGameobj());
+                    g[q.getName()] = g[currentPoint.getName()] + calculateHValue(currentPoint.getGameobj(), q.getGameobj()) + q.obstacle;//CalG
+                    f[q.getName()] = g[q.getName()] + calculateHValue(target, q.getGameobj());//CalF
                     pre[q.getName()] = currentPoint;
                     open.Add(q);
                 }
