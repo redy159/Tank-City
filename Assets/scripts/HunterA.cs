@@ -161,11 +161,8 @@ public class HunterA : Tank
         {
             Destroy(gameObject);
         }
-        if (collision.gameObject.tag == "base")
-        {
-            Destroy(gameObject);
-        }
     }
+
 
 
     private void OnTriggerEnter2D(Collider2D collision)
