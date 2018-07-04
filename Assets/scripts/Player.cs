@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Player : Tank {
 
@@ -13,6 +14,11 @@ public class Player : Tank {
 
     static public GameObject curNode;
 
+    protected void Start()
+    {
+        rb = gameObject.GetComponent<Rigidbody2D>();
+        player = Player.curNode;
+    }
     void Update()
     {   //Input Tu Nguoi Choi
         dx = Input.GetAxisRaw("Horizontal");
@@ -38,13 +44,10 @@ public class Player : Tank {
 
     void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.tag == "bullet")
+        if (collision.gameObject.tag == "bullet_enemy")
         {
             Destroy(gameObject);
-        }
-        if (collision.gameObject.tag == "base")
-        {
-            Destroy(gameObject);
+            SceneManager.LoadScene("game over");
         }
     }
 
