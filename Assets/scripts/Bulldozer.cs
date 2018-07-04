@@ -11,8 +11,6 @@ public class Bulldozer : Tank
         Move();
         this.facing();
         this.turnDirection();
-        if (nextNode.obstacle == 1)
-            Shoot();
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -68,10 +66,10 @@ public class Bulldozer : Tank
         fbase[int.Parse(q.getGameobj().name)] = g[int.Parse(q.getGameobj().name)] + calH(Base, q.getGameobj());
     }
 
-    public override float calH(GameObject a, GameObject b)
+    /*public override float calH(GameObject a, GameObject b)
     {
         return a.GetComponent<Node>().Dist_Base;
-    }
+    }*/
 
     public override void calG(ref float[] g, Node q)
     {

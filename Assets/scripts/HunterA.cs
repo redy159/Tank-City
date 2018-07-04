@@ -9,8 +9,8 @@ public class HunterA : Tank
     public int Threat_Detection(RaycastHit2D hit, ref float Clear_Time){
 		if (hit.collider != null) {
 			if ((hit.rigidbody != null ) && (hit.rigidbody.tag == "bullet")){ 
-				float Impact_Time = hit.distance / 6; // Thoi Gian Se Xay Ra Va Cham Khoang Cach CHia cho 10 la Van Toc Vien Dan
-				 Clear_Time = (hit.distance + 1) / 6; // Thoi Gian Vien dan bay qua , 10 la Van Toc Vien Dan
+				float Impact_Time = hit.distance / 7; // Thoi Gian Se Xay Ra Va Cham Khoang Cach CHia cho 10 la Van Toc Vien Dan
+				 Clear_Time = (hit.distance + 1) / 7; // Thoi Gian Vien dan bay qua , 10 la Van Toc Vien Dan
 				float Evade_Time =(float)(1.2) / this.speed; // Thoi Gian Ne, 1 khoang cach de di chuyen qua vung co dan va 0.2 khoang cach tru hao de dua ra quyet dinh la di dau
 				if (Impact_Time > Evade_Time ){
 					return 1;
