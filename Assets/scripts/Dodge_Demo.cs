@@ -12,9 +12,8 @@ public class Dodge_Demo : Tank {
 	public int Threat_Detection(RaycastHit2D hit, ref float Clear_Time){
 		if (hit.collider != null) {
 			if ((hit.rigidbody != null ) && (hit.rigidbody.tag == "bullet")){ 
-				Debug.Log(hit.rigidbody.name);
-				float Impact_Time = hit.distance / 10; // Thoi Gian Se Xay Ra Va Cham Khoang Cach CHia cho 10 la Van Toc Vien Dan
-				 Clear_Time = (hit.distance + 1) / 10; // Thoi Gian Vien dan bay qua , 10 la Van Toc Vien Dan
+				float Impact_Time = hit.distance / 6;//gameObject.GetComponent<Bullet>().Speed; // Thoi Gian Se Xay Ra Va Cham Khoang Cach CHia cho 6 la Van Toc Vien Dan
+				 Clear_Time = (hit.distance + 1) / 6;//gameObject.GetComponent<Bullet>().Speed; // Thoi Gian Vien dan bay qua , 6 la Van Toc Vien Dan
 				float Evade_Time =(float)(1.2) / this.speed; // Thoi Gian Ne, 1 khoang cach de di chuyen qua vung co dan va 0.2 khoang cach tru hao de dua ra quyet dinh la di dau
 				if (Impact_Time > Evade_Time ){
 					return 1;
@@ -65,58 +64,23 @@ public class Dodge_Demo : Tank {
 				}
 				
 			}
+			Debug.Log("Left Or Right");
         }
 		//Doi Mot Khoang Thoi Gian Clear_Time
 	}
-    private void Move()
+
+	protected void Move()
     {
-        float step = speed * Time.deltaTime;
-        if (nextNode != null)
-        {
-            transform.position = Vector3.MoveTowards(transform.position, nextNode.getGameobj().transform.position, step);
+            float step = speed * Time.deltaTime;
+			if (nextNode != null){
+            	transform.position = Vector3.MoveTowards(transform.position, nextNode.getGameobj().transform.position, step);
+				facing();
+				turnDirection();  
+			}
 
-            float sx = (nextNode.getGameobj().transform.position.x - currentNode.position.x);
-            float sy = (nextNode.getGameobj().transform.position.y - currentNode.position.y);
-
-            if (!(sx == 0 && sy == 0))
-            {
-                dx = (Mathf.Abs(sx) >= Mathf.Abs(sy)) ? 1 : 0;
-                dy = 1 - (dx * 1);//(x < y) ? 1 : 0;
-
-                if (sx > 0)
-                    dx *= 1;
-                else dx *= -1;
-
-                if (sy > 0)
-                    dy *= 1;
-                else dy *= -1;
-            }
-            //Quay Mat
-            if (dx != 0)
-            {
-                if (dx == 1)
-                {
-                    gameObject.transform.rotation = Quaternion.Euler(0, 0, -90);
-                }
-                else
-                {
-                    gameObject.transform.rotation = Quaternion.Euler(0, 0, 90);
-                }
-            }
-            else if (dy != 0)
-            {
-                if (dy == 1)
-                {
-                    gameObject.transform.rotation = Quaternion.Euler(0, 0, 0);
-                }
-                else
-                {
-                    gameObject.transform.rotation = Quaternion.Euler(0, 0, 180);
-                }
-            }
-        }
+                 
     }
-    
+	  
 	void Dodge(){
 		RaycastHit2D R = Physics2D.Raycast(transform.position, Vector2.right ); 
 		RaycastHit2D L = Physics2D.Raycast(transform.position, Vector2.left );
@@ -166,7 +130,7 @@ public class Dodge_Demo : Tank {
       	}
 		switch (Threat_Detection(U,ref tmp)){
 			case 1:{
-				code |= 8;
+				code |= 1;
 				if (Clear_Time < tmp)
 					Clear_Time = tmp;
 				break;
@@ -183,6 +147,7 @@ public class Dodge_Demo : Tank {
 		if (!Died){
 			if (code != 0){
 				Evade(code,Clear_Time); // Ne
+				
 			}
 			else 
 				Debug.Log("Clear"); // An Toan
@@ -194,12 +159,17 @@ public class Dodge_Demo : Tank {
         Move();
 	}
 
-    private void OnTriggerEnter2D(Collider2D collision)
+	void OnTriggerEnter2D(Collider2D collision)
     {
         currentNode = collision.gameObject.GetComponent<Node>();
     }
 
-    void Update() {
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+         
+    }
+        
+     void Update() {
 		Dodge();
 		//Contiue Wev Moving We Are
 		
