@@ -7,7 +7,7 @@ public class Back : MonoBehaviour {
 
     void OnMouseDown()
     {
-        SceneManager.LoadScene("test");
+        SceneManager.LoadScene("Menu_Demo");
     }
 
 }

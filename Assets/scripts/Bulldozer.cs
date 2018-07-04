@@ -182,7 +182,8 @@ public class Bulldozer : MonoBehaviour
             }
             #endregion
 
-            foreach (Node q in nextPoint) {
+            foreach (Node q in nextPoint)
+            {
                 //Node q is not in close and open
                 if (close.IndexOf(q) == -1 && open.IndexOf(q) == -1)
                 {

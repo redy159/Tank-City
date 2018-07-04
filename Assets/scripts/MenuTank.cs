@@ -39,7 +39,7 @@ public class MenuTank : MonoBehaviour {
         }
 
         if (index == 0 && Input.GetKeyDown("space"))
-            Application.LoadLevel("test");
+            Application.LoadLevel("Stage1");
         if (index == 1 && Input.GetKeyDown("space"))
             Application.LoadLevel("Help");
         if (index == 2 && Input.GetKeyDown("space"))
