@@ -4,8 +4,11 @@ using UnityEngine;
 
 public class MenuTank : MonoBehaviour {
 
+    private float dy = 0.0f;
     private GameObject[] choices;
     private int index = 0;
+    private bool active = false;
+
     private void Start()
     {
         choices = new GameObject[3];
@@ -20,29 +23,38 @@ public class MenuTank : MonoBehaviour {
     }
     private void Update()
     {
-        if (Input.GetKeyDown("up"))
+        dy = Input.GetAxisRaw("Vertical");
+        if (!active)
         {
-            choices[index].SetActive(false);
-            index--;
-            if (index < 0)
-                index = 2;
-            choices[index].SetActive(true);
-        }
+            if (dy != 0) active = true;
+            if (dy > 0)
+            {
 
-        if (Input.GetKeyDown("down"))
-        {
-            choices[index].SetActive(false);
-            index++;
-            if (index > 2)
-                index = 0;
-            choices[index].SetActive(true);
-        }
 
-        if (index == 0 && Input.GetKeyDown("space"))
+                choices[index].SetActive(false);
+                index--;
+                if (index < 0)
+                    index = 2;
+                choices[index].SetActive(true);
+
+            }
+            else
+            if (dy < 0)
+            {
+                choices[index].SetActive(false);
+                index++;
+                if (index > 2)
+                    index = 0;
+                choices[index].SetActive(true);
+            }
+            
+        }
+        else if (dy==0) active = false;
+        if (index == 0 && Input.GetButtonDown("Fire1"))
             Application.LoadLevel("Stage1");
-        if (index == 1 && Input.GetKeyDown("space"))
+        if (index == 1 && Input.GetButtonDown("Fire1"))
             Application.LoadLevel("Help");
-        if (index == 2 && Input.GetKeyDown("space"))
+        if (index == 2 && Input.GetButtonDown("Fire1"))
             Application.LoadLevel("About");
     }
 }
