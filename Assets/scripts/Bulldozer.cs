@@ -13,7 +13,7 @@ public class Bulldozer : Tank
         this.turnDirection();
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    /*private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.tag == "bullet")
         {
@@ -23,7 +23,7 @@ public class Bulldozer : Tank
         {
             Destroy(gameObject);
         }
-    }
+    }*/
 
 
     private void OnTriggerEnter2D(Collider2D collision)

@@ -11,9 +11,8 @@ public class Player : Tank {
     //}
 
     // Update is called once per frame
-    static public int win = 3;
     static public GameObject curNode;
-    public int hp;
+    public int hp = 2;
 
     protected void Start()
     {
@@ -48,12 +47,14 @@ public class Player : Tank {
         if ((collision.gameObject.tag == "bullet_enemy") || (collision.gameObject.tag == "bulldozer") || (collision.gameObject.tag == "seeker") || (collision.gameObject.tag == "hunter"))
         {
             hp--;
-            if (hp == 0) {
-                Destroy(gameObject);
-                SceneManager.LoadScene("game over");
-            }
+            Destroy(collision.gameObject);
+            
         }
-        if (win == 0) ;
+        if (hp == 0) {
+            Destroy(gameObject);
+            SceneManager.LoadScene("game over");
+            }
+        
     }
 
 }

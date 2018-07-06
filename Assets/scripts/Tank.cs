@@ -25,6 +25,7 @@ public class Tank : MonoBehaviour
     public const int row = 18;
     public const int col = 10;
     public float speed = 15.0f;
+    static int Win_Condition = 3;
 
 
     protected Rigidbody2D rb;
@@ -167,11 +168,24 @@ public class Tank : MonoBehaviour
     {
         if (collision.gameObject.tag == "bullet")
         {
+            Win_Condition --;
             Destroy(gameObject);
         }
+        if (collision.gameObject.tag == "player"){
+            collision.gameObject.GetComponent<Player>().hp--;
+            Win_Condition --;
+            Destroy(gameObject);
+            if (collision.gameObject.GetComponent<Player>().hp  == 0){
+                SceneManager.LoadScene("gameover");
+            }
+        }    
         if (collision.gameObject.tag == "base")
         {
+            Win_Condition --;
             Destroy(gameObject);
+        }
+        if (Win_Condition == 0){
+            SceneManager.LoadScene("game over");//Win roi Load Scene tiep theo
         }
     }
 
@@ -261,19 +275,19 @@ public class Tank : MonoBehaviour
             List<Node> nextPoint = new List<Node>();
 
             #region thêm vào list các đỉnh quanh currentPoint
-            if (currentPoint.TopNode != null)
+            if (currentPoint.TopNode != null && currentPoint.TopNode.obstacle != 9999)
             {
                 nextPoint.Add(currentPoint.TopNode);
             }
-            if (currentPoint.BottomNode != null)
+            if (currentPoint.BottomNode != null  && currentPoint.BottomNode.obstacle != 9999)
             {
                 nextPoint.Add(currentPoint.BottomNode);
             }
-            if (currentPoint.LeftNode != null)
+            if (currentPoint.LeftNode != null  && currentPoint.LeftNode.obstacle != 9999)
             {
                 nextPoint.Add(currentPoint.LeftNode);
             }
-            if (currentPoint.RightNode != null)
+            if (currentPoint.RightNode != null  && currentPoint.RightNode.obstacle != 9999)
             {
                 nextPoint.Add(currentPoint.RightNode);
             }
@@ -342,6 +356,8 @@ public class Tank : MonoBehaviour
             }
 
         }
+        open.Clear();
+        close.Clear();
         return TraceBack(currentPoint);
 
     }

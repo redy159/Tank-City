@@ -19,7 +19,7 @@ public class Seeker : Tank
             Shoot();
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    /*private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.tag == "bullet")
         {
@@ -29,7 +29,7 @@ public class Seeker : Tank
         {
             Destroy(gameObject);
         }
-    }
+    }*/
 
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -54,7 +54,7 @@ public class Seeker : Tank
     // return heuristic value
     public override Node findMinNode(ref float[] fBase, ref float[] fPlayer, ref List<Node> open)
     {
-        Debug.Log("Called S");
+        
         float min = 10000;
         Node currentPoint = new Node();
         foreach (Node node in open)
