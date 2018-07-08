@@ -50,11 +50,11 @@ public class MenuTank : MonoBehaviour {
             
         }
         else if (dy==0) active = false;
-        if (index == 0 && Input.GetButtonDown("Fire1"))
+        if (index == 0 && Input.GetKeyDown("space"))
             Application.LoadLevel("Stage1");
-        if (index == 1 && Input.GetButtonDown("Fire1"))
+        if (index == 1 && Input.GetKeyDown("space"))
             Application.LoadLevel("Help");
-        if (index == 2 && Input.GetButtonDown("Fire1"))
+        if (index == 2 && Input.GetKeyDown("space"))
             Application.LoadLevel("About");
     }
 }
