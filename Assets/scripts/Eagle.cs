@@ -56,15 +56,23 @@ public class Eagle : MonoBehaviour
         {
             hp--;
             this.GetComponent<SpriteRenderer>().sprite = damaged;
-            if (hp == 0) 
-                SceneManager.LoadScene("game over");
+            if (hp == 0)
+            {
+                GameObject Ui = GameObject.FindGameObjectWithTag("UI");
+                WinLoseControl wlcontrol = Ui.GetComponent<WinLoseControl>();
+                wlcontrol.setLose();
+            }
         }
         if (collision.gameObject.tag == "bulldozer")
         {
             hp--;
             this.GetComponent<SpriteRenderer>().sprite = damaged;
-            if (hp==0)
-                SceneManager.LoadScene("game over");
+            if (hp == 0)
+            {
+                GameObject Ui = GameObject.FindGameObjectWithTag("UI");
+                WinLoseControl wlcontrol = Ui.GetComponent<WinLoseControl>();
+                wlcontrol.setLose();
+            }
         }
     }
 }

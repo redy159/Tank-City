@@ -12,12 +12,16 @@ public class Player : Tank {
 
     // Update is called once per frame
     static public GameObject curNode;
+   
     public int hp = 2;
+    public int numberofenemy;
 
     protected void Start()
     {
         rb = gameObject.GetComponent<Rigidbody2D>();
+        shootaudio = gameObject.GetComponent<AudioSource>();
         player = Player.curNode;
+        Win_Condition = numberofenemy;
     }
     void Update()
     {   //Input Tu Nguoi Choi
@@ -29,8 +33,11 @@ public class Player : Tank {
 
         rb.velocity = new Vector2(dx, dy) * speed;
 
-        if (Input.GetButtonDown("Fire1"))
+        if (Input.GetButtonDown("Fire1") || Input.GetKeyDown("space"))
+        {
             Shoot();
+        }
+            
     }
 
     void OnTriggerEnter2D(Collider2D collision)
@@ -50,9 +57,14 @@ public class Player : Tank {
             Destroy(collision.gameObject);
             
         }
+
         if (hp == 0) {
+
             Destroy(gameObject);
-            SceneManager.LoadScene("game over");
+
+            GameObject Ui = GameObject.FindGameObjectWithTag("UI");
+            WinLoseControl wlcontrol = Ui.GetComponent<WinLoseControl>();
+            wlcontrol.setLose();
             }
         
     }
