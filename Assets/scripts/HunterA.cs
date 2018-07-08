@@ -5,7 +5,14 @@ using System.Collections.Generic;
 using System;
 
 public class HunterA : Tank
-{   
+{
+
+     void Start()
+    {
+        rb = gameObject.GetComponent<Rigidbody2D>();
+        shootaudio = gameObject.GetComponent<AudioSource>();
+    }
+
     public int Threat_Detection(RaycastHit2D hit, ref float Clear_Time){
 		if (hit.collider != null) {
 			if ((hit.rigidbody != null ) && (hit.rigidbody.tag == "bullet")){ 

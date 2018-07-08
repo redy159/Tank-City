@@ -6,6 +6,11 @@ using System;
 
 public class Seeker : Tank
 {
+    private void Start()
+    {
+        shootaudio = GetComponent<AudioSource>();
+    }
+
     void Update()
     {
         player = Player.curNode;

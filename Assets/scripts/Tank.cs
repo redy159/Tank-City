@@ -12,8 +12,9 @@ public class Tank : MonoBehaviour
     public float fireRate = 0.5f;
     protected float timeFire = 0.0f;
     public GameObject bullet;
+    public static int Win_Condition;
 
-
+    public GameObject Explosion;
     public GameObject Base;
     public GameObject player;
 
@@ -25,13 +26,12 @@ public class Tank : MonoBehaviour
     public const int row = 18;
     public const int col = 10;
     public float speed = 15.0f;
-    static int Win_Condition = 3;
 
 
     protected Rigidbody2D rb;
     protected float dx = 0.0f, dy = 0.0f;
     protected GameObject projectile;
-
+    protected AudioSource shootaudio;
     //chạy cuối update class con bắn
     //private void checkBrick()
     //{
@@ -41,6 +41,7 @@ public class Tank : MonoBehaviour
 
     protected void Move()
     {
+      
         try
         {
             float step = speed * Time.deltaTime;
@@ -163,29 +164,43 @@ public class Tank : MonoBehaviour
         }
     }
 
+    private void Strat_Explosion()
+    {
+        if (Explosion != null)
+        {
+            Instantiate(Explosion,this.transform.position,Quaternion.identity);
+        }
+    }
 
     protected void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.tag == "bullet")
         {
             Win_Condition --;
+            Strat_Explosion();
             Destroy(gameObject);
         }
         if (collision.gameObject.tag == "player"){
             collision.gameObject.GetComponent<Player>().hp--;
             Win_Condition --;
+            Strat_Explosion();
             Destroy(gameObject);
             if (collision.gameObject.GetComponent<Player>().hp  == 0){
-                SceneManager.LoadScene("gameover");
+                GameObject Ui = GameObject.FindGameObjectWithTag("UI");
+                WinLoseControl wlcontrol = Ui.GetComponent<WinLoseControl>();
+                wlcontrol.setLose();
             }
         }    
         if (collision.gameObject.tag == "base")
         {
             Win_Condition --;
+            Strat_Explosion();
             Destroy(gameObject);
         }
         if (Win_Condition == 0){
-            SceneManager.LoadScene("game over");//Win roi Load Scene tiep theo
+            GameObject Ui = GameObject.FindGameObjectWithTag("UI");
+            WinLoseControl wlcontrol = Ui.GetComponent<WinLoseControl>();
+            wlcontrol.setWin();
         }
     }
 
@@ -366,6 +381,10 @@ public class Tank : MonoBehaviour
     {
         if (Time.time > fireRate + timeFire)
         {
+            if (shootaudio != null)
+            {
+                shootaudio.Play();
+            }
             Vector2 bulletPos = transform.position;
             GameObject a = Instantiate(bullet);
             a.SetActive(false);
@@ -375,4 +394,5 @@ public class Tank : MonoBehaviour
             timeFire = Time.time;
         }
     }
+   
 }
